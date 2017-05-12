@@ -1,6 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/
-openrpg-gameserver/openrpg-gameserver.iml
-openrpg-tgbot/openrpg-tgbot.iml
-openrpg-backend.iml
+*.iml
 target/

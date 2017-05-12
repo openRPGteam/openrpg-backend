@@ -1,22 +1,22 @@
 package info.openrpg.gameserver.model;
 
 public class PlayerStats {
-    private int playerSTR;
-    private int playerINT;
+    private int strength;
+    private int intelligence;
 
     public int getSTR() {
-        return playerSTR;
+        return strength;
     }
 
-    public void setSTR(int _str) {
-        this.playerSTR = _str;
+    public void setSTR(int strength) {
+        this.strength = strength;
     }
 
     public int getINT() {
-        return playerINT;
+        return intelligence;
     }
 
-    public void setINT(int _int) {
-        this.playerINT = _int;
+    public void setINT(int intelligence) {
+        this.intelligence = intelligence;
     }
 }

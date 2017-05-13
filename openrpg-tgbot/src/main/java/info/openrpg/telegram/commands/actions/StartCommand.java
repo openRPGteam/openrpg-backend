@@ -2,8 +2,8 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
-import info.openrpg.telegram.commands.MessageWrapper;
-import info.openrpg.telegram.input.InputMessage;
+import info.openrpg.telegram.io.MessageWrapper;
+import info.openrpg.telegram.io.InputMessage;
 import org.hibernate.exception.ConstraintViolationException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.User;

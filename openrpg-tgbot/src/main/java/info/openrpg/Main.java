@@ -23,11 +23,12 @@ public class Main {
         try {
             input = Main.class.getClassLoader().getResourceAsStream("application.properties");
             properties.load(input);
-            Credentials botCredentials = Credentials
-                    .builder()
-                    .botName(properties.getProperty("bot.name"))
-                    .token(properties.getProperty("bot.token"))
-                    .build();
+            Credentials botCredentials = new Credentials(
+                    properties.getProperty("bot.name"),
+                    properties.getProperty("bot.token"),
+                    properties.getProperty("image-server.hostname"),
+                    Integer.parseInt(properties.getProperty("image-server.port"))
+            );
             telegramBotsApi.registerBot(new OpenRpgBot(botCredentials, properties));
         } catch (TelegramApiRequestException e) {
             logger.warning(e.getMessage());
@@ -35,6 +36,8 @@ public class Main {
             logger.warning("No file with properties was found");
         } catch (IOException e) {
             logger.warning("Exception while loading properties");
+        } catch (NumberFormatException e) {
+            logger.warning("Invalid port parameter of image-server");
         }
 
     }

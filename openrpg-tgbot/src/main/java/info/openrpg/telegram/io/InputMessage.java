@@ -1,7 +1,6 @@
-package info.openrpg.telegram.input;
+package info.openrpg.telegram.io;
 
 import com.google.common.base.Joiner;
-import info.openrpg.telegram.commands.CommandChooser;
 import info.openrpg.telegram.commands.TelegramCommand;
 import lombok.Getter;
 import org.telegram.telegrambots.api.objects.User;
@@ -9,6 +8,9 @@ import org.telegram.telegrambots.api.objects.User;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Class that holds input from user
+ */
 @Getter
 public class InputMessage {
     private final static Joiner JOINER = Joiner.on(" ").skipNulls();
@@ -18,17 +20,24 @@ public class InputMessage {
     private final TelegramCommand command;
     private final String[] arguments;
 
-    public InputMessage(String inputString, Long chatId, User from, CommandChooser commandChooser) {
+    public InputMessage(String inputString, Long chatId, User from) {
         this.chatId = chatId;
         this.from = from;
         this.text = inputString;
-        this.command = Optional.of(inputString)
-                .map(String::trim)
-                .map(s -> s.split(" "))
-                .filter(arr -> arr.length > 0)
-                .map(arr -> commandChooser.chooseCommand(arr[0]))
-                .orElse(TelegramCommand.NOTHING);
-        this.arguments = Optional.of(inputString)
+        this.command = parseCommand(inputString);
+        this.arguments = parseArguments(inputString);
+    }
+
+    public InputMessage(InputMessage inputMessage, String messageFromQueue) {
+        this.chatId = inputMessage.chatId;
+        this.from = inputMessage.from;
+        this.text = JOINER.join(messageFromQueue, inputMessage.text);
+        this.command = parseCommand(text);
+        this.arguments = parseArguments(text);
+    }
+
+    private String[] parseArguments(String inputString) {
+        return Optional.of(inputString)
                 .map(String::trim)
                 .map(s -> s.split(" "))
                 .filter(arr -> arr.length > 1)
@@ -36,22 +45,13 @@ public class InputMessage {
                 .orElse(null);
     }
 
-    public InputMessage(InputMessage inputMessage, String messageFromQueue, CommandChooser commandChooser) {
-        this.chatId = inputMessage.chatId;
-        this.from = inputMessage.from;
-        this.text = JOINER.join(messageFromQueue, inputMessage.text);
-        this.command = Optional.of(text)
+    private TelegramCommand parseCommand(String inputString) {
+        return Optional.of(inputString)
                 .map(String::trim)
                 .map(s -> s.split(" "))
                 .filter(arr -> arr.length > 0)
-                .map(arr -> commandChooser.chooseCommand(arr[0]))
+                .map(arr -> TelegramCommand.forCommand(arr[0]))
                 .orElse(TelegramCommand.NOTHING);
-        this.arguments = Optional.of(text)
-                .map(String::trim)
-                .map(s -> s.split(" "))
-                .filter(arr -> arr.length > 1)
-                .map(arr -> Arrays.copyOfRange(arr, 1, arr.length))
-                .orElse(null);
     }
 
     public boolean hasArguments() {

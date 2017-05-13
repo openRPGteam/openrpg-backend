@@ -6,8 +6,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@Builder
 public class Credentials {
-    private String botName;
-    private String token;
+    private final String botName;
+    private final String token;
+    private final String imageServerHostname;
+    private final int imageServerPort;
 }

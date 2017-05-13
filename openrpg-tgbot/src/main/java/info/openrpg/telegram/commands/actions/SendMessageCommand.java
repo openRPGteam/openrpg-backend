@@ -1,14 +1,14 @@
 package info.openrpg.telegram.commands.actions;
 
 import com.google.common.base.Joiner;
-import info.openrpg.constants.Commands;
+import info.openrpg.telegram.constants.Command;
 import info.openrpg.database.models.Message;
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.MessageRepository;
 import info.openrpg.database.repositories.PlayerRepository;
-import info.openrpg.telegram.commands.InlineCommand;
-import info.openrpg.telegram.commands.MessageWrapper;
-import info.openrpg.telegram.input.InputMessage;
+import info.openrpg.telegram.io.InlineButton;
+import info.openrpg.telegram.io.MessageWrapper;
+import info.openrpg.telegram.io.InputMessage;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 import java.util.Collections;
@@ -91,7 +91,7 @@ public class SendMessageCommand implements ExecutableCommand {
         List<Player> players = playerRepository.selectPlayerWithOffset(offset, 10);
         SendMessage sendMessage = new SendMessage()
                 .setText("Выберите игрока, которому вы хотите отправить сообщение:")
-                .setReplyMarkup(InlineCommand.playerList(Commands.SEND_MESSAGE, players, offset, playersNumber))
+                .setReplyMarkup(InlineButton.playerList(Command.SEND_MESSAGE, players, offset, playersNumber))
                 .setChatId(chatId);
         return Collections.singletonList(new MessageWrapper(sendMessage));
     }

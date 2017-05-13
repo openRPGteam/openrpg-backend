@@ -1,17 +1,19 @@
 package info.openrpg.telegram.commands.actions;
 
-import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
-import info.openrpg.telegram.commands.MessageWrapper;
-import info.openrpg.telegram.input.InputMessage;
+import info.openrpg.telegram.commands.Message;
+import info.openrpg.telegram.io.InlineButton;
+import info.openrpg.telegram.io.MessageWrapper;
+import info.openrpg.telegram.io.InputMessage;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHttpRequest;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -20,6 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Command sends GET {@code /move/player-id/x/y} request to image server
+ * Image server returns an image with moved player
+ * After that the image will be sent as message back to user
+ */
 public class MoveCommand implements ExecutableCommand {
     private final PlayerRepository playerRepository;
 
@@ -27,35 +34,54 @@ public class MoveCommand implements ExecutableCommand {
         this.playerRepository = playerRepository;
     }
 
+    /**
+     * @param inputMessage user io
+     * @return list with singleton {@link MessageWrapper#MessageWrapper(SendPhoto)} or empty list
+     * @throws InvalidStateException if backend server can't reach image server
+     */
     @Override
     public List<MessageWrapper> execute(InputMessage inputMessage) {
-        if (inputMessage.hasArguments(2)) {
-            int x = Integer.parseInt(inputMessage.getArgument(1));
-            int y = Math.negateExact(Integer.parseInt(inputMessage.getArgument(2)));
-            Optional<Player> playerByUsername = playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName());
-            if (playerByUsername.isPresent()) {
-                try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-                    CloseableHttpResponse get = client.execute(
-                            new HttpHost("52.88.12.119", 8080),
-                            new BasicHttpRequest(
-                                    "GET",
-                                    String.format("/move/%d/%d/%d", inputMessage.getFrom().getId(), x, y)
-                            )
-                    );
-                    HttpEntity entity = get.getEntity();
-                    String s = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
+        return Optional.of(inputMessage)
+                .filter(message -> message.hasArguments(2))
+                .map(message -> {
+                    int x = Integer.parseInt(inputMessage.getArgument(1));
+                    int y = Math.negateExact(Integer.parseInt(inputMessage.getArgument(2)));
+                    return playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName())
+                            .map(player -> sendMoveCommandToImageServer(inputMessage, x, y))
+                            .orElseGet(Collections::emptyList);
+                })
+                .orElseGet(() -> Collections.singletonList(new MessageWrapper(Message.MOVE_BUTTONS.sendTo(inputMessage.getChatId()))));
+    }
 
-                    SendPhoto sendPhoto = new SendPhoto()
-                            .setNewPhoto(s, new URL(s).openConnection().getInputStream())
-                            .setChatId(inputMessage.getChatId());
-                    return Collections.singletonList(new MessageWrapper(sendPhoto));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return Collections.emptyList();
+    /**
+     * Method sends request to image server that moving player
+     * Returned response of server is an link of image
+     * Image will be downloaded via network and published to {@link MessageWrapper} as io stream of {@link SendPhoto}
+     * @param inputMessage user io
+     * @param x x value of vector to move
+     * @param y y value of vector to move
+     * @return list with singleton {@link MessageWrapper#MessageWrapper(SendPhoto)} or empty list
+     * @throws InvalidStateException if backend server can't reach image server
+     */
+    private List<MessageWrapper> sendMoveCommandToImageServer(InputMessage inputMessage, int x, int y) {
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            CloseableHttpResponse get = client.execute(
+                    new HttpHost("52.88.12.119", 8080),
+                    new BasicHttpRequest(
+                            "GET",
+                            String.format("/move/%d/%d/%d", inputMessage.getFrom().getId(), x, y)
+                    )
+            );
+            String response = IOUtils.toString(get.getEntity().getContent(), Charset.defaultCharset());
+            SendPhoto sendPhoto = new SendPhoto()
+                    .setNewPhoto(response, new URL(response).openConnection().getInputStream())
+                    .setChatId(inputMessage.getChatId());
+            MessageWrapper messageWrapper = new MessageWrapper(Message.MOVE_BUTTONS.sendTo(inputMessage.getChatId()), sendPhoto);
+            messageWrapper.setMessageFirst(false);
+            return Collections.singletonList(messageWrapper);
+        } catch (IOException e) {
+            throw new InvalidStateException("Can't reach image-server");
         }
-        return Collections.emptyList();
     }
 
     @Override

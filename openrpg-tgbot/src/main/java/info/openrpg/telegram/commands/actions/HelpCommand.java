@@ -1,8 +1,8 @@
 package info.openrpg.telegram.commands.actions;
 
-import info.openrpg.telegram.commands.MessageWrapper;
+import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.commands.Message;
-import info.openrpg.telegram.input.InputMessage;
+import info.openrpg.telegram.io.InputMessage;
 
 import java.util.Collections;
 import java.util.List;

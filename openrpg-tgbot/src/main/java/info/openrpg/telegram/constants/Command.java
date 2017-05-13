@@ -1,6 +1,6 @@
-package info.openrpg.constants;
+package info.openrpg.telegram.constants;
 
-public class Commands {
+public class Command {
     public static final String START = "/start";
     public static final String HELP = "/help";
     public static final String PLAYER_INFO = "/player_info";

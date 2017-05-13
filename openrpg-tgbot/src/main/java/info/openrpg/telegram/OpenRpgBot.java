@@ -3,11 +3,10 @@ package info.openrpg.telegram;
 import info.openrpg.database.models.Chat;
 import info.openrpg.database.models.Message;
 import info.openrpg.database.models.Player;
-import info.openrpg.telegram.commands.CommandChooser;
-import info.openrpg.telegram.commands.MessageWrapper;
+import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.commands.TelegramCommand;
 import info.openrpg.telegram.commands.actions.ExecutableCommand;
-import info.openrpg.telegram.input.InputMessage;
+import info.openrpg.telegram.io.InputMessage;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
@@ -26,14 +25,12 @@ import java.util.logging.Logger;
 
 public class OpenRpgBot extends TelegramLongPollingBot {
     private static final Logger logger = Logger.getLogger("bot");
-    private final CommandChooser commandChooser;
 
     private Credentials credentials;
     private SessionFactory sessionFactory;
 
     public OpenRpgBot(Credentials credentials, Properties properties) {
         this.credentials = credentials;
-        this.commandChooser = new CommandChooser();
         this.sessionFactory = new Configuration()
                 .addProperties(properties)
                 .addAnnotatedClass(Message.class)
@@ -72,13 +69,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     private Optional<InputMessage> parseInputMessage(Update update) {
         return Optional.of(update)
                 .map(Update::getMessage)
-                .map(message -> new InputMessage(
-                                message.getText(),
-                                message.getChatId(),
-                                message.getFrom(),
-                                commandChooser
-                        )
-                )
+                .map(message -> new InputMessage(message.getText(), message.getChatId(), message.getFrom()))
                 .map(Optional::of)
                 .orElseGet(() -> parseCallback(update));
     }
@@ -98,7 +89,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
             entityManager.close();
             return message;
         })
-                .map(message -> new InputMessage(inputMessage, message.getMessage(), commandChooser))
+                .map(message -> new InputMessage(inputMessage, message.getMessage()))
                 .orElse(inputMessage);
     }
 
@@ -113,8 +104,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
                         new InputMessage(
                                 callbackQuery.getData(),
                                 Long.valueOf(callbackQuery.getFrom().getId()),
-                                callbackQuery.getFrom(),
-                                commandChooser
+                                callbackQuery.getFrom()
                         )
                 );
     }
@@ -165,10 +155,17 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     }
 
     private void sendMessageInWrapper(MessageWrapper messageWrapper) {
-        messageWrapper.getMessage()
-                .ifPresent(this::sendText);
-        messageWrapper.getPhoto()
-                .ifPresent(this::sendImage);
+        if (messageWrapper.isMessageFirst()) {
+            messageWrapper.getMessage()
+                    .ifPresent(this::sendText);
+            messageWrapper.getPhoto()
+                    .ifPresent(this::sendImage);
+        } else {
+            messageWrapper.getPhoto()
+                    .ifPresent(this::sendImage);
+            messageWrapper.getMessage()
+                    .ifPresent(this::sendText);
+        }
     }
 
     private void handleCrash(

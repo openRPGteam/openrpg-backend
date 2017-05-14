@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
 import org.apache.commons.io.IOUtils;
@@ -41,7 +42,8 @@ public class SpawnCommand implements ExecutableCommand {
 
                 SendPhoto sendPhoto = new SendPhoto()
                         .setNewPhoto(s, new URL(s).openConnection().getInputStream())
-                        .setChatId(inputMessage.getChatId());
+                        .setChatId(inputMessage.getChatId())
+                        .setReplyMarkup(InlineButton.moveButtonList());
                 return Collections.singletonList(new MessageWrapper(sendPhoto));
             } catch (IOException e) {
                 e.printStackTrace();

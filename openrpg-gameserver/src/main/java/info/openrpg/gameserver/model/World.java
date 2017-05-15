@@ -1,5 +1,7 @@
 package info.openrpg.gameserver.model;
 
+import info.openrpg.gameserver.enums.TerrainType;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -11,8 +13,11 @@ public class World {
     // Размер карты 10х10 чанков
     public static final int MAP_SIZE_X = 10;
 
-
+    //хешмап для игроков
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
+    //хешмап для прочих динамических обьектов
+    private final Map<Integer, GameObject> globalObjectsMap = new ConcurrentHashMap<>();
+
 
     private Chunk[][] worldChunks;
 

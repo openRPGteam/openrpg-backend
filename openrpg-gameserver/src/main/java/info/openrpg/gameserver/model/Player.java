@@ -1,5 +1,8 @@
 package info.openrpg.gameserver.model;
 
+import info.openrpg.gameserver.enums.GameClass;
+import info.openrpg.gameserver.enums.Race;
+
 import java.io.Serializable;
 import java.util.logging.Logger;
 

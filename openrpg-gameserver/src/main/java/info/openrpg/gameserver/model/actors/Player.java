@@ -31,12 +31,20 @@ public class Player extends AbstractActor implements Serializable {
 
     @Override
     public void move(MoveDirections direction) {
-        //TODO оче плохое решение. нужно будет отрефакторить
+        //TODO нужно будет отрефакторить
         PlayerCollision pc = new PlayerCollision(this.currentWorld);
         switch (direction) {
             case NORTH: {
-                pc.CheckTerrain();
-                pc.CheckActor();
+                Location newloc = new Location(getCurLocation().getX() - 1, getCurLocation().getY(), getCurLocation().getChunk_x(), getCurLocation().getChunk_y());
+                if (pc.CheckTerrain(newloc)) {
+                    if (pc.CheckActor(newloc)) {
+                        this.setCurLocation(newloc);
+                    } else {
+                        LOG.info("Player " + this.getPlayerId() + " cannot move to north");
+                    }
+                } else {
+                    LOG.info("Player " + this.getPlayerId() + " cannot move to north");
+                }
             }
         }
 

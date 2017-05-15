@@ -106,4 +106,8 @@ public class World implements IWorld {
     public int getAllGameObjectsCount() {
         return globalObjectsMap.size();
     }
+
+    public Chunk[][] getWorldChunks() {
+        return worldChunks;
+    }
 }

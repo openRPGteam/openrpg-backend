@@ -1,7 +1,7 @@
 package info.openrpg.telegram.io;
 
 import com.google.common.base.Joiner;
-import info.openrpg.database.models.Player;
+import info.openrpg.database.models.telegram.Player;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.constants.Direction;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;

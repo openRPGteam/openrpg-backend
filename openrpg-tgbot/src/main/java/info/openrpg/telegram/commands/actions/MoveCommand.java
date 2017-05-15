@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Command sends GET {@code /move/player-id/x/y} request to image server
- * Image server returns an image with moved player
+ * Command sends GET {@code /move/hero-id/x/y} request to image server
+ * Image server returns an image with moved hero
  * After that the image will be sent as message back to user
  */
 public class MoveCommand implements ExecutableCommand {
@@ -54,7 +54,7 @@ public class MoveCommand implements ExecutableCommand {
     }
 
     /**
-     * Method sends request to image server that moving player
+     * Method sends request to image server that moving hero
      * Returned response of server is an link of image
      * Image will be downloaded via network and published to {@link MessageWrapper} as io stream of {@link SendPhoto}
      * @param inputMessage user io

@@ -2,8 +2,8 @@ package info.openrpg.telegram.commands.actions;
 
 import com.google.common.base.Joiner;
 import info.openrpg.telegram.constants.Command;
-import info.openrpg.database.models.Message;
-import info.openrpg.database.models.Player;
+import info.openrpg.database.models.telegram.Message;
+import info.openrpg.database.models.telegram.Player;
 import info.openrpg.database.repositories.MessageRepository;
 import info.openrpg.database.repositories.PlayerRepository;
 import info.openrpg.telegram.io.InlineButton;

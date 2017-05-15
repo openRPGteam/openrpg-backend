@@ -1,4 +1,4 @@
-package info.openrpg.database.models;
+package info.openrpg.database.models.telegram;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

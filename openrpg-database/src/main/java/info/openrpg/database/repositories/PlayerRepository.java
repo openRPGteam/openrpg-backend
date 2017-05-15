@@ -1,6 +1,7 @@
 package info.openrpg.database.repositories;
 
-import info.openrpg.database.models.Player;
+
+import info.openrpg.database.models.telegram.Player;
 
 import java.util.List;
 import java.util.Optional;

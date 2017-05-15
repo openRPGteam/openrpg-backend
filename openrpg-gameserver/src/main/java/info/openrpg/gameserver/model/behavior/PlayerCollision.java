@@ -1,10 +1,10 @@
 package info.openrpg.gameserver.model.behavior;
 
-import info.openrpg.gameserver.inject.IWorld;
+import info.openrpg.gameserver.model.world.World;
 import info.openrpg.gameserver.model.world.Location;
 
 public class PlayerCollision extends AbstractCollision {
-    public PlayerCollision(IWorld currentWorld) {
+    public PlayerCollision(World currentWorld) {
         super(currentWorld);
     }
 

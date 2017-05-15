@@ -9,10 +9,82 @@
     <version>1.0</version>
     <name>OpenRPG Backend</name>
 
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <httpcompontents.version>4.5.2</httpcompontents.version>
+        <telegrambots.version>2.4.4.5</telegrambots.version>
+        <json.version>20160810</json.version>
+        <log4j.version>1.2.17</log4j.version>
+        <commons-logging.version>1.2</commons-logging.version>
+        <guava.version>20.0</guava.version>
+        <lombok.version>1.16.10</lombok.version>
+        <testng.version>6.11</testng.version>
+        <http-client.version>4.5.3</http-client.version>
+        <postgres-driver.version>9.4.1212</postgres-driver.version>
+        <hibernate.version>5.2.5.Final</hibernate.version>
+        <juice.version>4.1.0</juice.version>
+    </properties>
+
     <modules>
         <module>openrpg-tgbot</module>
         <module>openrpg-gameserver</module>
+        <module>openrpg-database</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${juice.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgres-driver.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http-client.version}</version>
+            </dependency>
+
+            <!--Telegram-->
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots</artifactId>
+                <version>${telegrambots.version}</version>
+            </dependency>
+            <!--Telegram-->
+
+            <!--Testing-->
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!--Testing-->
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>

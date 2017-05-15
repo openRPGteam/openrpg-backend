@@ -1,8 +1,10 @@
 package info.openrpg.telegram;
 
-import info.openrpg.database.models.Chat;
-import info.openrpg.database.models.Message;
-import info.openrpg.database.models.Player;
+import info.openrpg.database.models.telegram.Message;
+import info.openrpg.database.models.telegram.Player;
+import info.openrpg.database.models.hero.Hero;
+import info.openrpg.database.models.hero.HeroStats;
+import info.openrpg.database.models.world.Cell;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.commands.TelegramCommand;
 import info.openrpg.telegram.commands.actions.ExecutableCommand;
@@ -36,7 +38,9 @@ public class OpenRpgBot extends TelegramLongPollingBot {
                 .addProperties(properties)
                 .addAnnotatedClass(Message.class)
                 .addAnnotatedClass(Player.class)
-                .addAnnotatedClass(Chat.class)
+                .addAnnotatedClass(Cell.class)
+                .addAnnotatedClass(Hero.class)
+                .addAnnotatedClass(HeroStats.class)
                 .buildSessionFactory();
         this.entityManager = sessionFactory.createEntityManager();
     }

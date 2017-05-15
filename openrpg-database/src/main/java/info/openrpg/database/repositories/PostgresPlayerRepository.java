@@ -1,6 +1,6 @@
 package info.openrpg.database.repositories;
 
-import info.openrpg.database.models.Player;
+import info.openrpg.database.models.telegram.Player;
 import lombok.AllArgsConstructor;
 
 import javax.persistence.EntityManager;

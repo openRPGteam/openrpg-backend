@@ -1,122 +1,27 @@
 package info.openrpg.gameserver.model.world;
 
-import info.openrpg.gameserver.enums.TerrainType;
-import info.openrpg.gameserver.inject.IWorld;
+import info.openrpg.database.models.hero.Hero;
 import info.openrpg.gameserver.model.actors.GameObject;
-import info.openrpg.gameserver.model.actors.Player;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
-public class World implements IWorld {
-    public static final Logger LOG = Logger.getLogger(World.class.getName());
-    // Размер чанка 100x100
-    public final int CHUNK_SIZE = 10;
-    // Размер карты 10х10 чанков
-    public final int MAP_SIZE_X = 10;
+public interface World {
+    void addHero(Hero hero);
+    void removeHero(Hero hero);
 
-    //хешмап для игроков
-    private final Map<Integer, Player> players = new ConcurrentHashMap<>();
-    //хешмап для прочих динамических обьектов
-    private final Map<Integer, GameObject> globalObjectsMap = new ConcurrentHashMap<>();
+    Hero getHeroById(int playerId);
 
+    Map<Integer, Hero> getAllHero();
 
-    private Chunk[][] worldChunks;
+    int getAllHeroCount();
 
-    public World() {
-        initchunks();
-    }
+    void addGameObject(GameObject gameObject);
 
-    //TODO из базы подгружать
-    public void initchunks() {
-        Chunk[][] random = new Chunk[MAP_SIZE_X][MAP_SIZE_X];
-        for (int i = 0; i < MAP_SIZE_X; i++) {
-            for (int j = 0; j < MAP_SIZE_X; j++) {
-                random[i][j] = this.randomchunk(TerrainType.EARTH);
-            }
-        }
-        worldChunks = random;
-    }
+    void removeGameObject(GameObject gameObject);
 
-    public Chunk randomchunk(TerrainType type) {
-        TerrainType[][] random = new TerrainType[CHUNK_SIZE][CHUNK_SIZE];
-        for (int i = 0; i < CHUNK_SIZE; i++) {
-            for (int j = 0; j < CHUNK_SIZE; j++) {
-                random[i][j] = type;
-            }
-        }
-        return new Chunk(random);
-    }
+    GameObject getGameObject(int objectId);
 
+    Map<Integer, GameObject> getAllGameObjects();
 
-    @Override
-    public void addPlayer(Player player) {
-        if (players.containsKey(player.getPlayerId())) {
-            LOG.warning("Player " + player.toString() + " already in playersmap");
-            return;
-        }
-        players.put(player.getPlayerId(), player);
-    }
-
-    @Override
-    public void removePlayer(Player player) {
-        players.remove(player);
-    }
-
-    @Override
-    public Player getPlayerById(int playerId) {
-        return players.get(playerId);
-    }
-
-    @Override
-    public Map<Integer, Player> getAllPlayers() {
-        return players;
-    }
-
-    @Override
-    public int getAllPlayersCount() {
-        return players.size();
-    }
-
-    @Override
-    public void addGameObject(GameObject gameObject) {
-        if (globalObjectsMap.containsKey(gameObject.getObjectId())) {
-            LOG.warning("GameObject " + gameObject.toString() + " already in gameobjectsmap");
-            return;
-        }
-        globalObjectsMap.put(gameObject.getObjectId(), gameObject);
-    }
-
-    @Override
-    public void removeGameObject(GameObject gameObject) {
-        globalObjectsMap.remove(gameObject.getObjectId());
-    }
-
-    @Override
-    public GameObject getGameObject(int objectId) {
-        return globalObjectsMap.get(objectId);
-    }
-
-    @Override
-    public Map<Integer, GameObject> getAllGameObjects() {
-        return globalObjectsMap;
-    }
-
-    @Override
-    public int getAllGameObjectsCount() {
-        return globalObjectsMap.size();
-    }
-
-    public Chunk[][] getWorldChunks() {
-        return worldChunks;
-    }
-
-    public int getChunkSize() {
-        return CHUNK_SIZE;
-    }
-
-    public int getMapSizeX() {
-        return MAP_SIZE_X;
-    }
+    int getAllGameObjectsCount();
 }

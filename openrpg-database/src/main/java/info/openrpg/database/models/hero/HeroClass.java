@@ -1,6 +1,6 @@
-package info.openrpg.gameserver.enums;
+package info.openrpg.database.models.hero;
 
-public enum GameClass {
+public enum HeroClass {
     PALADIN,
     KNIGHT,
     MONK,

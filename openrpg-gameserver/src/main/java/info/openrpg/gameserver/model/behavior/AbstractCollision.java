@@ -1,13 +1,13 @@
 package info.openrpg.gameserver.model.behavior;
 
 import com.google.inject.Inject;
-import info.openrpg.gameserver.inject.IWorld;
+import info.openrpg.gameserver.model.world.World;
 
 public abstract class AbstractCollision implements ICollision {
-    private IWorld currentWorld;
+    private World currentWorld;
 
     @Inject
-    public AbstractCollision(IWorld currentWorld) {
+    public AbstractCollision(World currentWorld) {
         this.currentWorld = currentWorld;
     }
 }

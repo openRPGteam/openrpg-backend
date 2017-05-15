@@ -8,7 +8,6 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -19,10 +18,8 @@ public class Main {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         Properties properties = new Properties();
-        InputStream input;
         try {
-            input = Main.class.getClassLoader().getResourceAsStream("application.properties");
-            properties.load(input);
+            properties.load(Main.class.getClassLoader().getResourceAsStream("application.properties"));
             Credentials botCredentials = new Credentials(
                     properties.getProperty("bot.name"),
                     properties.getProperty("bot.token"),
@@ -39,6 +36,5 @@ public class Main {
         } catch (NumberFormatException e) {
             logger.warning("Invalid port parameter of image-server");
         }
-
     }
 }

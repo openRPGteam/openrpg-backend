@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 public class World implements IWorld {
     public static final Logger LOG = Logger.getLogger(World.class.getName());
     // Размер чанка 100x100
-    public static final int CHUNK_SIZE = 100;
+    public final int CHUNK_SIZE = 100;
     // Размер карты 10х10 чанков
-    public static final int MAP_SIZE_X = 10;
+    public final int MAP_SIZE_X = 10;
 
     //хешмап для игроков
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
@@ -109,5 +109,13 @@ public class World implements IWorld {
 
     public Chunk[][] getWorldChunks() {
         return worldChunks;
+    }
+
+    public int getChunkSize() {
+        return CHUNK_SIZE;
+    }
+
+    public int getMapSizeX() {
+        return MAP_SIZE_X;
     }
 }

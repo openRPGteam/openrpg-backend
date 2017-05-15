@@ -25,4 +25,7 @@ public interface IWorld {
 
     int getAllGameObjectsCount();
 
+    int getChunkSize();
+
+    int getMapSizeX();
 }

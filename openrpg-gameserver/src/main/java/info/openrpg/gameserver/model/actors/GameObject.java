@@ -19,8 +19,4 @@ public class GameObject extends AbstractActor {
         return objectId;
     }
 
-    @Override
-    public void move(MoveDirections direction) {
-
-    }
 }

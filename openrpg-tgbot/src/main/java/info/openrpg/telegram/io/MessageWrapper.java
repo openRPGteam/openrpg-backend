@@ -12,8 +12,6 @@ import java.util.Optional;
 public class MessageWrapper {
     private final Optional<SendMessage> message;
     private final Optional<SendPhoto> photo;
-    @Setter
-    private boolean messageFirst = true;
 
     public MessageWrapper(@NotNull SendMessage sendMessage) {
         message = Optional.of(sendMessage);

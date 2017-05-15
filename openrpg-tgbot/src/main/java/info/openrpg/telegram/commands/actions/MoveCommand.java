@@ -66,7 +66,7 @@ public class MoveCommand implements ExecutableCommand {
     private List<MessageWrapper> sendMoveCommandToImageServer(InputMessage inputMessage, int x, int y) {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             CloseableHttpResponse get = client.execute(
-                    new HttpHost("52.88.12.119", 8080),
+                    new HttpHost("localhost", 8080),
                     new BasicHttpRequest(
                             "GET",
                             String.format("/move/%d/%d/%d", inputMessage.getFrom().getId(), x, y)
@@ -75,9 +75,9 @@ public class MoveCommand implements ExecutableCommand {
             String response = IOUtils.toString(get.getEntity().getContent(), Charset.defaultCharset());
             SendPhoto sendPhoto = new SendPhoto()
                     .setNewPhoto(response, new URL(response).openConnection().getInputStream())
-                    .setChatId(inputMessage.getChatId());
-            MessageWrapper messageWrapper = new MessageWrapper(Message.MOVE_BUTTONS.sendTo(inputMessage.getChatId()), sendPhoto);
-            messageWrapper.setMessageFirst(false);
+                    .setChatId(inputMessage.getChatId())
+                    .setReplyMarkup(InlineButton.moveButtonList());
+            MessageWrapper messageWrapper = new MessageWrapper(sendPhoto);
             return Collections.singletonList(messageWrapper);
         } catch (IOException e) {
             throw new InvalidStateException("Can't reach image-server");

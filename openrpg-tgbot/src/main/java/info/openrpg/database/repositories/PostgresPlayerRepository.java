@@ -23,8 +23,6 @@ public class PostgresPlayerRepository implements PlayerRepository {
     @Override
     public List<Player> selectPlayerWithOffset(int offset, int count) {
         return entityManager.createQuery("from Player p ", Player.class)
-                .setMaxResults(count)
-                .setFirstResult(offset)
                 .getResultList();
     }
 

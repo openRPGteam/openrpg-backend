@@ -34,7 +34,7 @@ public class SpawnCommand implements ExecutableCommand {
         if (playerByUsername.isPresent()) {
             try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
                 CloseableHttpResponse get = client.execute(
-                        new HttpHost("52.88.12.119", 8080),
+                        new HttpHost("localhost", 8080),
                         new BasicHttpRequest("GET", "/spawn/".concat(String.valueOf(inputMessage.getFrom().getId())))
                 );
                 HttpEntity entity = get.getEntity();

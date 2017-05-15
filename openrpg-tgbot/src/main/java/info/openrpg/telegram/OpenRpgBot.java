@@ -28,6 +28,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
 
     private Credentials credentials;
     private SessionFactory sessionFactory;
+    private EntityManager entityManager;
 
     public OpenRpgBot(Credentials credentials, Properties properties) {
         this.credentials = credentials;
@@ -37,6 +38,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
                 .addAnnotatedClass(Player.class)
                 .addAnnotatedClass(Chat.class)
                 .buildSessionFactory();
+        this.entityManager = sessionFactory.createEntityManager();
     }
 
     @Override
@@ -75,21 +77,19 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     }
 
     private InputMessage updateInputMessage(InputMessage inputMessage) {
-        EntityManager entityManager = sessionFactory.createEntityManager();
-        entityManager.getTransaction().begin();
         Optional<Message> messageQueue = entityManager.createQuery("from Message where player_id = :playerId", Message.class)
                 .setParameter("playerId", inputMessage.getChatId())
                 .getResultList()
                 .stream()
                 .findFirst();
 
-        return messageQueue.map(message -> {
-            entityManager.remove(message);
-            entityManager.getTransaction().commit();
-            entityManager.close();
-            return message;
-        })
-                .map(message -> new InputMessage(inputMessage, message.getMessage()))
+        return messageQueue
+                .map(message -> {
+                    entityManager.remove(message);
+                    entityManager.getTransaction().commit();
+                    entityManager.close();
+                    return message;
+                }).map(message -> new InputMessage(inputMessage, message.getMessage()))
                 .orElse(inputMessage);
     }
 
@@ -141,7 +141,6 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     }
 
     private void executeCommand(TelegramCommand telegramCommand, InputMessage inputMessage) {
-        EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
         ExecutableCommand command = telegramCommand.getExecutableCommand(entityManager);
         try {
@@ -151,21 +150,13 @@ public class OpenRpgBot extends TelegramLongPollingBot {
         } catch (RuntimeException e) {
             handleCrash(e, entityManager, command, inputMessage);
         }
-        entityManager.close();
     }
 
     private void sendMessageInWrapper(MessageWrapper messageWrapper) {
-        if (messageWrapper.isMessageFirst()) {
-            messageWrapper.getMessage()
-                    .ifPresent(this::sendText);
-            messageWrapper.getPhoto()
-                    .ifPresent(this::sendImage);
-        } else {
-            messageWrapper.getPhoto()
-                    .ifPresent(this::sendImage);
-            messageWrapper.getMessage()
-                    .ifPresent(this::sendText);
-        }
+        messageWrapper.getMessage()
+                .ifPresent(this::sendText);
+        messageWrapper.getPhoto()
+                .ifPresent(this::sendImage);
     }
 
     private void handleCrash(

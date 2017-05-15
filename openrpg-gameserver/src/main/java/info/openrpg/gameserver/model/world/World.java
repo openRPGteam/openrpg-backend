@@ -51,11 +51,59 @@ public class World implements IWorld {
 
     @Override
     public void addPlayer(Player player) {
-
+        if (players.containsKey(player.getPlayerId())) {
+            LOG.warning("Player " + player.toString() + " already in playersmap");
+            return;
+        }
+        players.put(player.getPlayerId(), player);
     }
 
     @Override
     public void removePlayer(Player player) {
+        players.remove(player);
+    }
 
+    @Override
+    public Player getPlayerById(int playerId) {
+        return players.get(playerId);
+    }
+
+    @Override
+    public Map<Integer, Player> getAllPlayers() {
+        return players;
+    }
+
+    @Override
+    public int getAllPlayersCount() {
+        return players.size();
+    }
+
+    @Override
+    public void addGameObject(GameObject gameObject) {
+        if (globalObjectsMap.containsKey(gameObject.getObjectId())) {
+            LOG.warning("GameObject " + gameObject.toString() + " already in gameobjectsmap");
+            return;
+        }
+        globalObjectsMap.put(gameObject.getObjectId(), gameObject);
+    }
+
+    @Override
+    public void removeGameObject(GameObject gameObject) {
+        globalObjectsMap.remove(gameObject.getObjectId());
+    }
+
+    @Override
+    public GameObject getGameObject(int objectId) {
+        return globalObjectsMap.get(objectId);
+    }
+
+    @Override
+    public Map<Integer, GameObject> getAllGameObjects() {
+        return globalObjectsMap;
+    }
+
+    @Override
+    public int getAllGameObjectsCount() {
+        return globalObjectsMap.size();
     }
 }

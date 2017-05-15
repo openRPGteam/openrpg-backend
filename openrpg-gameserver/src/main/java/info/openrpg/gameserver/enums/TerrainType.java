@@ -1,4 +1,4 @@
-package info.openrpg.gameserver.model;
+package info.openrpg.gameserver.enums;
 
 public enum TerrainType {
     EARTH,

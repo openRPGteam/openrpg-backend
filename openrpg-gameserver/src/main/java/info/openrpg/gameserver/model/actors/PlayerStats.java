@@ -1,4 +1,4 @@
-package info.openrpg.gameserver.model;
+package info.openrpg.gameserver.model.actors;
 
 public class PlayerStats {
     private int strength;

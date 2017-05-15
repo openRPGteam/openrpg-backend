@@ -1,4 +1,4 @@
-package info.openrpg.gameserver.model;
+package info.openrpg.gameserver.model.world;
 
 import info.openrpg.gameserver.enums.TerrainType;
 

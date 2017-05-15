@@ -1,12 +1,15 @@
-package info.openrpg.gameserver.model;
+package info.openrpg.gameserver.model.world;
 
 import info.openrpg.gameserver.enums.TerrainType;
+import info.openrpg.gameserver.inject.IWorld;
+import info.openrpg.gameserver.model.actors.GameObject;
+import info.openrpg.gameserver.model.actors.Player;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-public class World {
+public class World implements IWorld {
     public static final Logger LOG = Logger.getLogger(World.class.getName());
     // Размер чанка 100x100
     public static final int CHUNK_SIZE = 100;
@@ -46,4 +49,13 @@ public class World {
     }
 
 
+    @Override
+    public void addPlayer(Player player) {
+
+    }
+
+    @Override
+    public void removePlayer(Player player) {
+
+    }
 }

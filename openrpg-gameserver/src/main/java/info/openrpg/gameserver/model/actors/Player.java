@@ -29,8 +29,6 @@ public class Player extends AbstractActor implements Serializable {
         this.playerId = playerId;
     }
 
-
-
     public Integer getPlayerId() {
         return playerId;
     }

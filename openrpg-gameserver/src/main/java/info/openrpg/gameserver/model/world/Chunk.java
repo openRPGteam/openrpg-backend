@@ -12,4 +12,8 @@ public class Chunk {
     public TerrainType getTerrainFromChunkByXY(int x, int y) {
         return chunkmap[x - 1][y - 1];
     }
+
+    public TerrainType[][] getChunkmap() {
+        return chunkmap;
+    }
 }

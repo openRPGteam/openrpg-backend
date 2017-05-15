@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class World implements IWorld {
     public static final Logger LOG = Logger.getLogger(World.class.getName());
     // Размер чанка 100x100
-    public final int CHUNK_SIZE = 100;
+    public final int CHUNK_SIZE = 10;
     // Размер карты 10х10 чанков
     public final int MAP_SIZE_X = 10;
 
@@ -29,19 +29,20 @@ public class World implements IWorld {
     }
 
     //TODO из базы подгружать
-    private void initchunks() {
-        Chunk[][] random = new Chunk[MAP_SIZE_X - 1][MAP_SIZE_X - 1];
-        for (int i = 0; i < MAP_SIZE_X - 1; i++) {
-            for (int j = 0; j < MAP_SIZE_X - 1; j++) {
+    public void initchunks() {
+        Chunk[][] random = new Chunk[MAP_SIZE_X][MAP_SIZE_X];
+        for (int i = 0; i < MAP_SIZE_X; i++) {
+            for (int j = 0; j < MAP_SIZE_X; j++) {
                 random[i][j] = this.randomchunk(TerrainType.EARTH);
             }
         }
+        worldChunks = random;
     }
 
-    private Chunk randomchunk(TerrainType type) {
-        TerrainType[][] random = new TerrainType[CHUNK_SIZE - 1][CHUNK_SIZE - 1];
-        for (int i = 0; i < MAP_SIZE_X - 1; i++) {
-            for (int j = 0; j < MAP_SIZE_X - 1; j++) {
+    public Chunk randomchunk(TerrainType type) {
+        TerrainType[][] random = new TerrainType[CHUNK_SIZE][CHUNK_SIZE];
+        for (int i = 0; i < CHUNK_SIZE; i++) {
+            for (int j = 0; j < CHUNK_SIZE; j++) {
                 random[i][j] = type;
             }
         }

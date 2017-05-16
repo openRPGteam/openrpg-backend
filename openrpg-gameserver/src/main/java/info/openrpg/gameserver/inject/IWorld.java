@@ -2,6 +2,7 @@ package info.openrpg.gameserver.inject;
 
 import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
+import info.openrpg.gameserver.model.world.Chunk;
 
 import java.util.Map;
 
@@ -28,4 +29,6 @@ public interface IWorld {
     int getChunkSize();
 
     int getMapSizeX();
+
+    Chunk[][] getWorldChunks();
 }

@@ -19,7 +19,7 @@ public class WorldCreateTest {
     }
 
     @Test
-    public void testrandomchunk() {
+    public void testRandomChunk() {
         Chunk newchunk = testWorld.randomchunk(TerrainType.EARTH);
         Assert.assertNotNull("Пустой элемент в начале первой строки", newchunk.getChunkmap()[0][0]);
         Assert.assertNotNull("Пустой элемент в конце первой строки", newchunk.getChunkmap()[0][testWorld.CHUNK_SIZE - 1]);
@@ -28,10 +28,11 @@ public class WorldCreateTest {
     }
 
     @Test
-    public void testinitchunk() {
+    public void testInitChunk() {
         Assert.assertEquals("Размер глобал мапы не очень", testWorld.getMapSizeX(), testWorld.getWorldChunks().length);
         Assert.assertEquals("Размер глобал мапы не очень", testWorld.getMapSizeX(), testWorld.getWorldChunks()[0].length);
 
     }
+
 }
 

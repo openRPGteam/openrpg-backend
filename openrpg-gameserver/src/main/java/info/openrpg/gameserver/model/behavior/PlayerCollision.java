@@ -10,7 +10,8 @@ public class PlayerCollision extends AbstractCollision {
 
     @Override
     public boolean CheckTerrain(Location location) {
-        return true;
+        return currentWorld.getWorldChunks()[location.getChunk_x()][location.getChunk_y()]
+                .getChunkmap()[location.getX()][location.getY()].isPassable();
     }
 
     @Override

@@ -22,21 +22,21 @@ public class World implements IWorld {
     private final Map<Integer, GameObject> globalObjectsMap = new ConcurrentHashMap<>();
 
 
-    private Chunk[][] worldChunks;
+    private final Chunk[][] worldChunks;
 
     public World() {
-        initchunks();
+        worldChunks = initchunks();
     }
 
     //TODO из базы подгружать
-    public void initchunks() {
+    public Chunk[][] initchunks() {
         Chunk[][] random = new Chunk[MAP_SIZE_X][MAP_SIZE_X];
         for (int i = 0; i < MAP_SIZE_X; i++) {
             for (int j = 0; j < MAP_SIZE_X; j++) {
                 random[i][j] = this.randomchunk(TerrainType.EARTH);
             }
         }
-        worldChunks = random;
+        return random;
     }
 
     public Chunk randomchunk(TerrainType type) {
@@ -119,4 +119,5 @@ public class World implements IWorld {
     public int getMapSizeX() {
         return MAP_SIZE_X;
     }
+
 }

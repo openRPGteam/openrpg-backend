@@ -15,9 +15,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "hero")
+@Table(
+        name = "hero",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "stats_id", name = "stats_id_uq"),
+                @UniqueConstraint(columnNames = "name", name = "name_uq")
+        }
+)
 @Data
 public class Hero {
     @Id
@@ -28,7 +35,8 @@ public class Hero {
     private final HeroClass heroClass;
     @Enumerated(EnumType.STRING)
     private final Race race;
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name",
+            nullable = false)
     private final String name;
     @ManyToOne
     @JoinColumn(
@@ -44,7 +52,6 @@ public class Hero {
             name = "stats_id",
             referencedColumnName = "id",
             nullable = false,
-            unique = true,
             foreignKey = @ForeignKey(name = "hero_stats_id_fkey")
     )
     private HeroStats heroStats;

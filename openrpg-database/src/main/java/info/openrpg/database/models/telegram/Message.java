@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,9 @@ public class Message {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "player_id", referencedColumnName = "id")
+    @JoinColumn(name = "player_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "player_id_fkey"))
     private Player player;
 
     @Column(name = "message")

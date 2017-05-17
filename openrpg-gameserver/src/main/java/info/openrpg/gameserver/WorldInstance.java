@@ -10,10 +10,10 @@ import info.openrpg.gameserver.model.world.World;
 
 import java.util.Map;
 
-public class WorldInstanceApi {
+public class WorldInstance {
     private final World world;
 
-    public WorldInstanceApi() {
+    public WorldInstance() {
         Injector injector = Guice.createInjector(new GeneralModule());
         this.world = injector.getInstance(World.class);
     }
@@ -30,10 +30,14 @@ public class WorldInstanceApi {
         return world.getAllPlayersCount();
     }
 
-    ;
+
 
     public void movePlayer(Player player, MoveDirections moveDirections) {
         world.getPlayerById(player.getPlayerId()).move(moveDirections);
+    }
+
+    public void movePlayerById(Integer player, MoveDirections moveDirections) {
+        world.getPlayerById(player).move(moveDirections);
     }
 
     public Chunk getMap(int chunk_x, int chunk_y) {

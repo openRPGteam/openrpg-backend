@@ -1,4 +1,4 @@
-import info.openrpg.gameserver.WorldInstanceApi;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.gameserver.enums.GameClass;
 import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.enums.Race;
@@ -9,17 +9,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
-
 public class WorldPlayerTest {
-    private WorldInstanceApi world;
+    private WorldInstance world;
     private Player player1;
     private Player player2;
     private Player player3;
 
     @Before
     public void init() {
-        world = new WorldInstanceApi();
+        world = new WorldInstance();
         player1 = new Player("lol",
                 new Location(1, 1, 1, 1),
                 new PlayerStats(1, 1),
@@ -76,6 +74,51 @@ public class WorldPlayerTest {
         world.movePlayer(player1, MoveDirections.NORTH); //0,1,1,1
         world.movePlayer(player1, MoveDirections.NORTH); //9,1,0,1
         Assert.assertArrayEquals(new int[]{9, 1, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+    }
+
+    @Test
+    public void movePlayerSouth() {
+        //движение на юг
+        world.addPlayer(player1); //1,1,1,1
+        world.movePlayer(player1, MoveDirections.SOUTH); //2,1,1,1
+        world.movePlayer(player1, MoveDirections.SOUTH); //3,1,1,1
+        Assert.assertArrayEquals(new int[]{3, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+    }
+
+    @Test
+    public void movePlayerNorthEast() {
+        //движение на северо-восток
+        world.addPlayer(player1); //1,1,1,1
+        world.movePlayer(player1, MoveDirections.NORTHEAST); //0,2,1,1
+        world.movePlayer(player1, MoveDirections.NORTHEAST); //9,3,0,1
+        Assert.assertArrayEquals(new int[]{9, 3, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+    }
+
+    @Test
+    public void movePlayerNorthWest() {
+        //движение на северо-запад
+        world.addPlayer(player1); //1,1,1,1
+        world.movePlayer(player1, MoveDirections.NORTHWEST); //0,0,1,1
+        world.movePlayer(player1, MoveDirections.NORTHWEST); //9,9,0,0
+        Assert.assertArrayEquals(new int[]{9, 9, 0, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+    }
+
+    @Test
+    public void movePlayerSouthWest() {
+        //движение на юго-запад
+        world.addPlayer(player1); //1,1,1,1
+        world.movePlayer(player1, MoveDirections.SOUTHWEST); //2,0,1,1
+        world.movePlayer(player1, MoveDirections.SOUTHWEST); //3,9,1,0
+        Assert.assertArrayEquals(new int[]{3, 9, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+    }
+
+    @Test
+    public void movePlayerSouthEast() {
+        //движение на юго-восток
+        world.addPlayer(player1); //1,1,1,1
+        world.movePlayer(player1, MoveDirections.SOUTHEAST); //2,2,1,1
+        world.movePlayer(player1, MoveDirections.SOUTHEAST); //3,3,1,1
+        Assert.assertArrayEquals(new int[]{3, 3, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test

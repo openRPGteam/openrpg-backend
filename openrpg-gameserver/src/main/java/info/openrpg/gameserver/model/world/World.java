@@ -4,13 +4,18 @@ import info.openrpg.gameserver.enums.TerrainType;
 import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
+import info.openrpg.gameserver.model.events.IEvent;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 public class World implements IWorld {
-    public static final Logger LOG = Logger.getLogger(World.class.getName());
+    public static final Logger LOG = Logger.getLogger(World.class.getSimpleName());
     // Размер чанка 100x100
     public final int CHUNK_SIZE = 10;
     // Размер карты 10х10 чанков
@@ -21,11 +26,68 @@ public class World implements IWorld {
     //хешмап для прочих динамических обьектов
     private final Map<Integer, GameObject> globalObjectsMap = new ConcurrentHashMap<>();
 
-
+    //карта мира
     private final Chunk[][] worldChunks;
+
+    private final ArrayBlockingQueue<IEvent> eventsQuene;
+    private final ReentrantLock eventsQueueLock = new ReentrantLock();
 
     public World() {
         worldChunks = initchunks();
+        eventsQuene = new ArrayBlockingQueue(100);
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (!eventsQueueLock.tryLock()) {
+                    return;
+                }
+                LOG.info("start processing blocked queue");
+                try {
+                    while (true) {
+                        IEvent event = eventsQuene.poll();
+                        if (event == null) return;
+                        try {
+                            switch (event.getEventType()) {
+                                case ADDPLAYER: {
+                                    addPlayer(event.getPlayer());
+                                    break;
+                                }
+                                case REMOVEPLAYER: {
+                                    removePlayer(event.getPlayer());
+                                    break;
+                                }
+                                case MOVEPLAYER: {
+                                    getPlayerById(event.getPlayer().getPlayerId()).move(event.getDirection());
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            LOG.severe("Exception processing event queue");
+                        }
+
+                    }
+
+                } finally {
+                    LOG.info("stop processing blocked queue");
+                    eventsQueueLock.unlock();
+                }
+
+            }
+        };
+        timer.schedule(timerTask, 0, 5000);
+
+    }
+
+    public void addEvent(IEvent event) {
+        if (!eventsQueueLock.tryLock()) {
+            return;
+        }
+        try {
+            eventsQuene.add(event);
+        } finally {
+            eventsQueueLock.unlock();
+        }
     }
 
     //TODO из базы подгружать
@@ -65,6 +127,11 @@ public class World implements IWorld {
     public void removePlayer(Player player) {
         players.remove(player.getPlayerId(), player);
         LOG.info("Player " + player.getName() + " removed from playersmap");
+    }
+
+    public void removePlayerById(int playerId) {
+        players.remove(playerId);
+        LOG.info("Player with id" + playerId + " removed from playersmap");
     }
 
     @Override
@@ -128,5 +195,4 @@ public class World implements IWorld {
     public int getMapSizeX() {
         return MAP_SIZE_X;
     }
-
 }

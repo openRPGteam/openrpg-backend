@@ -1,6 +1,7 @@
 package info.openrpg.image.processing;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -32,7 +33,21 @@ public class HTTPRequestSender implements RequestSender {
             String response = IOUtils.toString(get.getEntity().getContent(), Charset.defaultCharset());
             return Optional.of(new URL(response).openConnection().getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<InputStream> spawnPlayer(long id) {
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            CloseableHttpResponse get = client.execute(
+                    new HttpHost("localhost", 8080),
+                    new BasicHttpRequest("GET", "/spawn/".concat(String.valueOf(id)))
+            );
+            HttpEntity entity = get.getEntity();
+            String response = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
+            return Optional.of(new URL(response).openConnection().getInputStream());
+        } catch (IOException e) {
             return Optional.empty();
         }
     }

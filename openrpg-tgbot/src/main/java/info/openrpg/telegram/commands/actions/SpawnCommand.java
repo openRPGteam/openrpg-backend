@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
@@ -15,6 +16,7 @@ import org.apache.http.message.BasicHttpRequest;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -23,33 +25,23 @@ import java.util.Optional;
 
 public class SpawnCommand implements ExecutableCommand {
     private final PlayerRepository playerRepository;
+    private final RequestSender requestSender;
 
-    public SpawnCommand(PlayerRepository playerRepository) {
+    public SpawnCommand(PlayerRepository playerRepository, RequestSender requestSender) {
         this.playerRepository = playerRepository;
+        this.requestSender = requestSender;
     }
 
     @Override
     public List<MessageWrapper> execute(InputMessage inputMessage) {
-        Optional<Player> playerByUsername = playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName());
-        if (playerByUsername.isPresent()) {
-            try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-                CloseableHttpResponse get = client.execute(
-                        new HttpHost("localhost", 8080),
-                        new BasicHttpRequest("GET", "/spawn/".concat(String.valueOf(inputMessage.getFrom().getId())))
-                );
-                HttpEntity entity = get.getEntity();
-                String s = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
-
-                SendPhoto sendPhoto = new SendPhoto()
-                        .setNewPhoto(s, new URL(s).openConnection().getInputStream())
-                        .setChatId(inputMessage.getChatId())
-                        .setReplyMarkup(InlineButton.moveButtonList());
-                return Collections.singletonList(new MessageWrapper(sendPhoto));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return Collections.emptyList();
+        return playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName())
+                .flatMap(player -> requestSender.spawnPlayer(inputMessage.getChatId()))
+                .map(inputStream -> new SendPhoto().setNewPhoto("spawn", inputStream))
+                .map(sendPhoto -> sendPhoto.setChatId(inputMessage.getChatId()))
+                .map(sendPhoto -> sendPhoto.setReplyMarkup(InlineButton.moveButtonList()))
+                .map(MessageWrapper::new)
+                .map(Collections::singletonList)
+                .orElseThrow(() -> new IllegalStateException("can't reach image server"));
     }
 
     @Override

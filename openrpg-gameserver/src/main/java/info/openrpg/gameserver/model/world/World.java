@@ -52,16 +52,19 @@ public class World implements IWorld {
 
     @Override
     public void addPlayer(Player player) {
+        player.bindWorld(this);
         if (players.containsKey(player.getPlayerId())) {
-            LOG.warning("Player " + player.toString() + " already in playersmap");
+            LOG.warning("Player " + player.getName() + " already in playersmap");
             return;
         }
         players.put(player.getPlayerId(), player);
+        LOG.info("Player " + player.getName() + " put in playersmap");
     }
 
     @Override
     public void removePlayer(Player player) {
-        players.remove(player);
+        players.remove(player.getPlayerId(), player);
+        LOG.info("Player " + player.getName() + " removed from playersmap");
     }
 
     @Override
@@ -110,6 +113,12 @@ public class World implements IWorld {
 
     public Chunk[][] getWorldChunks() {
         return worldChunks;
+    }
+
+    @Override
+    public Chunk getChunkByXY(int chunk_x, int chunk_y) {
+
+        return worldChunks[chunk_x][chunk_y];
     }
 
     public int getChunkSize() {

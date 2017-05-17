@@ -16,4 +16,15 @@ public class Chunk {
     public TerrainType[][] getChunkmap() {
         return chunkmap;
     }
+
+    public String printChunk() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < chunkmap.length; i++) {
+            for (int y = 0; y < chunkmap[i].length; y++) {
+                sb.append(chunkmap[i][y].name());
+            }
+            sb.append("\t\n");
+        }
+        return sb.toString();
+    }
 }

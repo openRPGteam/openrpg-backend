@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WorldCreateTest {
+public class ChunksCreateTest {
     private World testWorld;
 
     @Before

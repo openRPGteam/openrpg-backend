@@ -10,15 +10,17 @@ import java.util.logging.Logger;
 
 public abstract class AbstractActor implements MoveableActor {
     public static final Logger LOG = Logger.getLogger(AbstractActor.class.getName());
-    final IWorld currentWorld;
+    protected IWorld currentWorld;
     private Location curLocation;
 
-    @Inject
-    public AbstractActor(Location curLocation, IWorld currentWorld) {
-        this.currentWorld = currentWorld;
+    public AbstractActor(Location curLocation) {
         this.curLocation = curLocation;
     }
 
+    @Inject
+    public void bindWorld(IWorld currentWorld) {
+        this.currentWorld = currentWorld;
+    }
     public Location getCurLocation() {
         return curLocation;
     }
@@ -54,7 +56,8 @@ public abstract class AbstractActor implements MoveableActor {
             case WEST: {
                 if (getCurLocation().getY() == 0)
                     newloc = new Location(getCurLocation().getX(), currentWorld.getChunkSize() - 1, getCurLocation().getChunk_x(), getCurLocation().getChunk_y() - 1);
-                newloc = new Location(getCurLocation().getX(), getCurLocation().getY() - 1, getCurLocation().getChunk_x(), getCurLocation().getChunk_y());
+                else
+                    newloc = new Location(getCurLocation().getX(), getCurLocation().getY() - 1, getCurLocation().getChunk_x(), getCurLocation().getChunk_y());
                 break;
             }
             case SOUTHWEST: {
@@ -108,6 +111,7 @@ public abstract class AbstractActor implements MoveableActor {
         if (pc.CheckTerrain(newloc)) {
             if (pc.CheckActor(newloc)) {
                 this.setCurLocation(newloc);
+                LOG.info("Actor move to " + direction.name());
             } else {
                 LOG.info("Actor cannot move");
             }

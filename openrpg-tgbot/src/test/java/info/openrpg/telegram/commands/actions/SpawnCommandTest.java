@@ -1,10 +1,8 @@
 package info.openrpg.telegram.commands.actions;
 
-import com.google.common.base.Joiner;
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
 import info.openrpg.image.processing.RequestSender;
-import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.InputMessage;
@@ -23,7 +21,6 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
 
 public class SpawnCommandTest {
     private static final Long CHAT_ID = 13L;
@@ -69,6 +66,20 @@ public class SpawnCommandTest {
     public void testHandleCrash() throws Exception {
         InputMessage message = new InputMessage("", 13L, new User());
         Assert.assertEquals(command.handleCrash(new RuntimeException(), message), Collections.emptyList());
+    }
+
+    @Test
+    public void testWrongStateCrash() throws Exception {
+        InputMessage message = new InputMessage("", CHAT_ID, new User());
+        List<MessageWrapper> messageWrappers = command.handleCrash(new IllegalStateException(), message);
+        Assert.assertFalse(messageWrappers.isEmpty());
+        Assert.assertTrue(messageWrappers.size() == 1);
+        MessageWrapper messageWrapper = messageWrappers.get(0);
+        Assert.assertNotNull(messageWrapper);
+        SendMessage sendMessage = messageWrapper.getMessage();
+        Assert.assertNotNull(sendMessage);
+        Assert.assertEquals(sendMessage.getText(), "В данный момент сервер недоступен");
+        Assert.assertEquals(sendMessage.getChatId(), String.valueOf(CHAT_ID));
     }
 
 }

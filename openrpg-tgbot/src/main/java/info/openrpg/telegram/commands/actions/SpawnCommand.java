@@ -2,9 +2,11 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.repositories.PlayerRepository;
 import info.openrpg.image.processing.RequestSender;
+import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.InputMessage;
 import info.openrpg.telegram.io.MessageWrapper;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 
 import java.util.Collections;
@@ -33,6 +35,11 @@ public class SpawnCommand implements ExecutableCommand {
 
     @Override
     public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
+        if (e instanceof IllegalStateException) {
+            return Collections.singletonList(new MessageWrapper(
+                    Message.CANT_CONNECT.sendTo(inputMessage.getChatId())
+            ));
+        }
         return Collections.emptyList();
     }
 }

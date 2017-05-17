@@ -4,6 +4,11 @@ public class PlayerStats {
     private int strength;
     private int intelligence;
 
+    public PlayerStats(int strength, int intelligence) {
+        this.strength = strength;
+        this.intelligence = intelligence;
+    }
+
     public int getSTR() {
         return strength;
     }

@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import info.openrpg.gameserver.inject.IWorld;
 
 public abstract class AbstractCollision implements ICollision {
-    private IWorld currentWorld;
+    protected IWorld currentWorld;
 
     @Inject
     public AbstractCollision(IWorld currentWorld) {

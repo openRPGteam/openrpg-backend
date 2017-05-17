@@ -9,8 +9,8 @@ public class GameObject extends AbstractActor {
     private GameObjectType objectType;
     private Integer objectId;
 
-    public GameObject(GameObjectType objectType, Integer objectId, Location curLocation, IWorld currentWorld) {
-        super(curLocation, currentWorld);
+    public GameObject(GameObjectType objectType, Integer objectId, Location curLocation) {
+        super(curLocation);
         this.objectType = objectType;
         this.objectId = objectId;
     }

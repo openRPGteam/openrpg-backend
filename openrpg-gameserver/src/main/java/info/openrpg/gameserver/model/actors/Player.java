@@ -20,8 +20,8 @@ public class Player extends AbstractActor implements Serializable {
     private final Integer playerId;
     private PlayerStats curPlayerStats;
 
-    public Player(String name, Location curLocation, IWorld currentWorld, PlayerStats curPlayerStats, GameClass gameClass, Race playerRace, Integer playerId) {
-        super(curLocation, currentWorld);
+    public Player(String name, Location curLocation, PlayerStats curPlayerStats, GameClass gameClass, Race playerRace, Integer playerId) {
+        super(curLocation);
         this.name = name;
         this.curPlayerStats = curPlayerStats;
         this.gameClass = gameClass;
@@ -31,5 +31,9 @@ public class Player extends AbstractActor implements Serializable {
 
     public Integer getPlayerId() {
         return playerId;
+    }
+
+    public String getName() {
+        return name;
     }
 }

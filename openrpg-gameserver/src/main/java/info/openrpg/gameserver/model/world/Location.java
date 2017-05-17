@@ -62,4 +62,18 @@ public class Location {
         this.chunk_x = loc.getChunk_x();
         this.chunk_y = loc.getChunk_y();
     }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "x=" + x +
+                ", y=" + y +
+                ", chunk_x=" + chunk_x +
+                ", chunk_y=" + chunk_y +
+                '}';
+    }
+
+    public int[] asArray() {
+        return new int[]{this.x, this.y, this.chunk_x, this.chunk_y};
+    }
 }

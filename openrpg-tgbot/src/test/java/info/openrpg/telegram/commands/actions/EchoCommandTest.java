@@ -1,6 +1,6 @@
 package info.openrpg.telegram.commands.actions;
 
-import info.openrpg.image.processing.RequstSender;
+import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InputMessage;
 import info.openrpg.telegram.io.MessageWrapper;
@@ -22,9 +22,9 @@ public class EchoCommandTest {
 
     @BeforeClass
     public void setUp() {
-        RequstSender requstSenderMock = mock(RequstSender.class);
-        when(requstSenderMock.ping()).thenReturn(RESPONSE_MESSAGE);
-        command = new EchoCommand(requstSenderMock);
+        RequestSender requestSenderMock = mock(RequestSender.class);
+        when(requestSenderMock.ping()).thenReturn(RESPONSE_MESSAGE);
+        command = new EchoCommand(requestSenderMock);
     }
 
     @Test

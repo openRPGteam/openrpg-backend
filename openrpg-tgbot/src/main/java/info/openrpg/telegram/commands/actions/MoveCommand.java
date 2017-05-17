@@ -1,6 +1,7 @@
 package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
@@ -29,9 +30,11 @@ import java.util.Optional;
  */
 public class MoveCommand implements ExecutableCommand {
     private final PlayerRepository playerRepository;
+    private final RequestSender requestSender;
 
-    public MoveCommand(PlayerRepository playerRepository) {
+    public MoveCommand(PlayerRepository playerRepository, RequestSender requestSender) {
         this.playerRepository = playerRepository;
+        this.requestSender = requestSender;
     }
 
     /**
@@ -45,7 +48,7 @@ public class MoveCommand implements ExecutableCommand {
                 .filter(message -> message.hasArguments(2))
                 .map(message -> {
                     int x = Integer.parseInt(inputMessage.getArgument(1));
-                    int y = Math.negateExact(Integer.parseInt(inputMessage.getArgument(2)));
+                    int y = Integer.parseInt(inputMessage.getArgument(2));
                     return playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName())
                             .map(player -> sendMoveCommandToImageServer(inputMessage, x, y))
                             .orElseGet(Collections::emptyList);
@@ -64,24 +67,13 @@ public class MoveCommand implements ExecutableCommand {
      * @throws InvalidStateException if backend server can't reach image server
      */
     private List<MessageWrapper> sendMoveCommandToImageServer(InputMessage inputMessage, int x, int y) {
-        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
-            CloseableHttpResponse get = client.execute(
-                    new HttpHost("localhost", 8080),
-                    new BasicHttpRequest(
-                            "GET",
-                            String.format("/move/%d/%d/%d", inputMessage.getFrom().getId(), x, y)
-                    )
-            );
-            String response = IOUtils.toString(get.getEntity().getContent(), Charset.defaultCharset());
             SendPhoto sendPhoto = new SendPhoto()
-                    .setNewPhoto(response, new URL(response).openConnection().getInputStream())
+                    .setNewPhoto("image", requestSender.sendMove(inputMessage.getChatId(), x, y)
+                            .orElseThrow(() -> new InvalidStateException("Can't reach image-server")))
                     .setChatId(inputMessage.getChatId())
                     .setReplyMarkup(InlineButton.moveButtonList());
             MessageWrapper messageWrapper = new MessageWrapper(sendPhoto);
             return Collections.singletonList(messageWrapper);
-        } catch (IOException e) {
-            throw new InvalidStateException("Can't reach image-server");
-        }
     }
 
     @Override

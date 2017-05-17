@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands;
 
 import info.openrpg.database.repositories.PostgresPlayerRepository;
 import info.openrpg.database.repositories.PostrgresMessageRepository;
+import info.openrpg.image.processing.HTTPRequestSender;
 import info.openrpg.telegram.commands.actions.DoNothingCommand;
 import info.openrpg.telegram.commands.actions.ExecutableCommand;
 import info.openrpg.telegram.commands.actions.HelpCommand;
@@ -35,7 +36,7 @@ public enum TelegramCommand {
             )
     ),
     SPAWN(Command.SPAWN, entityManager -> new SpawnCommand(new PostgresPlayerRepository(entityManager))),
-    MOVE(Command.MOVE, entityManager -> new MoveCommand(new PostgresPlayerRepository(entityManager)));
+    MOVE(Command.MOVE, entityManager -> new MoveCommand(new PostgresPlayerRepository(entityManager), new HTTPRequestSender()));
 
     private final String commandPrefix;
     private final Function<EntityManager, ExecutableCommand> executableCommand;

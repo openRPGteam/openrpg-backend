@@ -1,6 +1,6 @@
 package info.openrpg.telegram.commands.actions;
 
-import info.openrpg.image.processing.RequstSender;
+import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -9,10 +9,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class EchoCommand implements ExecutableCommand {
-    private final RequstSender requstSender;
+    private final RequestSender requestSender;
 
-    public EchoCommand(RequstSender requstSender) {
-        this.requstSender = requstSender;
+    public EchoCommand(RequestSender requestSender) {
+        this.requestSender = requestSender;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class EchoCommand implements ExecutableCommand {
         return Collections.singletonList(
                 new MessageWrapper(
                         new SendMessage()
-                                .setText(requstSender.ping())
+                                .setText(requestSender.ping())
                                 .setChatId(inputMessage.getChatId())));
     }
 

@@ -13,6 +13,26 @@ import java.util.List;
 
 public class InlineButton {
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
+    private static final InlineKeyboardMarkup moveKeyboard;
+    static {
+        List<List<InlineKeyboardButton>> keys = new ArrayList<>();
+        List<InlineKeyboardButton> topRow = new ArrayList<>();
+        topRow.add(createInlineKeyboardButton("🢄", getJoin(Direction.TOP_LEFT)));
+        topRow.add(createInlineKeyboardButton("🢁", getJoin(Direction.TOP)));
+        topRow.add(createInlineKeyboardButton("🢅", getJoin(Direction.TOP_RIGHT)));
+        keys.add(topRow);
+        List<InlineKeyboardButton> middleRow = new ArrayList<>();
+        middleRow.add(createInlineKeyboardButton("🢀", getJoin(Direction.LEFT)));
+        middleRow.add(createInlineKeyboardButton("◉", "/"));
+        middleRow.add(createInlineKeyboardButton("🢂", getJoin(Direction.RIGHT)));
+        keys.add(middleRow);
+        List<InlineKeyboardButton> bottomRow = new ArrayList<>();
+        bottomRow.add(createInlineKeyboardButton("🢇", getJoin(Direction.BOTTOM_LEFT)));
+        bottomRow.add(createInlineKeyboardButton("🢃", getJoin(Direction.BOTTOM)));
+        bottomRow.add(createInlineKeyboardButton("🢆", getJoin(Direction.BOTTOM_RIGHT)));
+        keys.add(bottomRow);
+        moveKeyboard = new InlineKeyboardMarkup().setKeyboard(keys);
+    }
 
     public static InlineKeyboardMarkup helpInlineCommands() {
         List<List<InlineKeyboardButton>> keys = new ArrayList<>();
@@ -33,23 +53,7 @@ public class InlineButton {
     }
 
     public static InlineKeyboardMarkup moveButtonList() {
-        List<List<InlineKeyboardButton>> keys = new ArrayList<>();
-        List<InlineKeyboardButton> topRow = new ArrayList<>();
-        topRow.add(createInlineKeyboardButton("🢄", getJoin(Direction.TOP_LEFT)));
-        topRow.add(createInlineKeyboardButton("🢁", getJoin(Direction.TOP)));
-        topRow.add(createInlineKeyboardButton("🢅", getJoin(Direction.TOP_RIGHT)));
-        keys.add(topRow);
-        List<InlineKeyboardButton> middleRow = new ArrayList<>();
-        middleRow.add(createInlineKeyboardButton("🢀", getJoin(Direction.LEFT)));
-        middleRow.add(createInlineKeyboardButton("◉", "/"));
-        middleRow.add(createInlineKeyboardButton("🢂", getJoin(Direction.RIGHT)));
-        keys.add(middleRow);
-        List<InlineKeyboardButton> bottomRow = new ArrayList<>();
-        bottomRow.add(createInlineKeyboardButton("🢇", getJoin(Direction.BOTTOM_LEFT)));
-        bottomRow.add(createInlineKeyboardButton("🢃", getJoin(Direction.BOTTOM)));
-        bottomRow.add(createInlineKeyboardButton("🢆", getJoin(Direction.BOTTOM_RIGHT)));
-        keys.add(bottomRow);
-        return new InlineKeyboardMarkup().setKeyboard(keys);
+        return moveKeyboard;
     }
 
     private static String getJoin(Direction direction) {

@@ -1,27 +1,14 @@
 package info.openrpg.telegram.commands.actions;
 
-import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.InlineButton;
-import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHttpRequest;
+import info.openrpg.telegram.io.MessageWrapper;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class SpawnCommand implements ExecutableCommand {
     private final PlayerRepository playerRepository;

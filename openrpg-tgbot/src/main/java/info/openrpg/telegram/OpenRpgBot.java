@@ -153,9 +153,9 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     }
 
     private void sendMessageInWrapper(MessageWrapper messageWrapper) {
-        messageWrapper.getMessage()
+        Optional.ofNullable(messageWrapper.getMessage())
                 .ifPresent(this::sendText);
-        messageWrapper.getPhoto()
+        Optional.ofNullable(messageWrapper.getPhoto())
                 .ifPresent(this::sendImage);
     }
 

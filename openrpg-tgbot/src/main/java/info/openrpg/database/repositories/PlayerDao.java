@@ -5,7 +5,7 @@ import info.openrpg.database.models.Player;
 import java.util.List;
 import java.util.Optional;
 
-public interface PlayerRepository {
+public interface PlayerDao {
     Optional<Player> findPlayerByUsername(String username);
 
     List<Player> selectPlayerWithOffset(int offset, int count);

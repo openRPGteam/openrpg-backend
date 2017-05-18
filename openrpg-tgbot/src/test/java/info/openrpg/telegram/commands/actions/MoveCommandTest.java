@@ -2,7 +2,7 @@ package info.openrpg.telegram.commands.actions;
 
 import com.google.common.base.Joiner;
 import info.openrpg.database.models.Player;
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.constants.Command;
@@ -35,7 +35,7 @@ public class MoveCommandTest {
 
     @BeforeClass
     public void setUp() throws Exception {
-        PlayerRepository playerRepository = mock(PlayerRepository.class);
+        PlayerDao playerDao = mock(PlayerDao.class);
         RequestSender requestSender = mock(RequestSender.class);
         when(requestSender.sendMove(CHAT_ID, 1, 1)).thenReturn(Optional.of(STREAM));
 
@@ -45,8 +45,8 @@ public class MoveCommandTest {
                 .userName(USER_NAME)
                 .id(CHAT_ID.intValue())
                 .build();
-        when(playerRepository.findPlayerByUsername(USER_NAME)).thenReturn(Optional.of(player));
-        command = new MoveCommand(playerRepository, requestSender);
+        when(playerDao.findPlayerByUsername(USER_NAME)).thenReturn(Optional.of(player));
+        command = new MoveCommand(playerDao, requestSender);
     }
 
     @Test

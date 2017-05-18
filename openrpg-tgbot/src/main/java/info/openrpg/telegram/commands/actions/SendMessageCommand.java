@@ -1,14 +1,15 @@
 package info.openrpg.telegram.commands.actions;
 
 import com.google.common.base.Joiner;
-import info.openrpg.telegram.constants.Command;
+import com.google.inject.Inject;
 import info.openrpg.database.models.Message;
 import info.openrpg.database.models.Player;
-import info.openrpg.database.repositories.MessageRepository;
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.MessageDao;
+import info.openrpg.database.repositories.PlayerDao;
+import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InlineButton;
-import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
+import info.openrpg.telegram.io.MessageWrapper;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 import java.util.Collections;
@@ -23,12 +24,13 @@ public class SendMessageCommand implements ExecutableCommand {
     private static final String UNKNOWN_PLAYER_MESSAGE = "Ты попытался потыкать палкой несуществующего пидора.";
     private static final String PLAYER_PEEKED_MESSAGE = "Тебе передал сообщение";
 
-    private final PlayerRepository playerRepository;
-    private final MessageRepository messageRepository;
+    private final PlayerDao playerDao;
+    private final MessageDao messageDao;
 
-    public SendMessageCommand(PlayerRepository playerRepository, MessageRepository messageRepository) {
-        this.playerRepository = playerRepository;
-        this.messageRepository = messageRepository;
+    @Inject
+    public SendMessageCommand(PlayerDao playerDao, MessageDao messageDao) {
+        this.playerDao = playerDao;
+        this.messageDao = messageDao;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class SendMessageCommand implements ExecutableCommand {
         return Optional.of(inputMessage)
                 .filter(iM -> iM.hasArguments(2))
                 .map(iM -> iM.getArgument(1))
-                .map(username -> playerRepository.findPlayerByUsername(username)
+                .map(username -> playerDao.findPlayerByUsername(username)
                         .map(player -> new SendMessage()
                                 .setChatId(new Long(player.getId()))
                                 .setText(JOINER.join(
@@ -74,21 +76,21 @@ public class SendMessageCommand implements ExecutableCommand {
     }
 
     private List<MessageWrapper> typeSendMessage(InputMessage inputMessage) {
-        Player player = playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName())
+        Player player = playerDao.findPlayerByUsername(inputMessage.getFrom().getUserName())
                 .orElseThrow(() -> new RuntimeException("WTF"));
         Message message = Message.builder()
                 .player(player)
                 .message(inputMessage.getText())
                 .build();
-        messageRepository.saveMessage(message);
+        messageDao.saveMessage(message);
         return Collections.singletonList(new MessageWrapper(new SendMessage()
                 .setText("Напишите текст, который вы хотите отправить:")
                 .setChatId(inputMessage.getChatId())));
     }
 
     private List<MessageWrapper> playersButtonList(int offset, long chatId) {
-        int playersNumber = playerRepository.selectPlayersNumber();
-        List<Player> players = playerRepository.selectPlayerWithOffset(offset, 10);
+        int playersNumber = playerDao.selectPlayersNumber();
+        List<Player> players = playerDao.selectPlayerWithOffset(offset, 10);
         SendMessage sendMessage = new SendMessage()
                 .setText("Выберите игрока, которому вы хотите отправить сообщение:")
                 .setReplyMarkup(InlineButton.playerList(Command.SEND_MESSAGE, players, offset, playersNumber))

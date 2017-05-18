@@ -1,7 +1,7 @@
 package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InlineButton;
@@ -32,7 +32,7 @@ public class SpawnCommandTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        PlayerRepository playerRepository = mock(PlayerRepository.class);
+        PlayerDao playerDao = mock(PlayerDao.class);
         RequestSender requestSender = mock(RequestSender.class);
         when(requestSender.spawnPlayer(CHAT_ID)).thenReturn(Optional.of(STREAM));
 
@@ -42,8 +42,8 @@ public class SpawnCommandTest {
                 .userName(USER_NAME)
                 .id(CHAT_ID.intValue())
                 .build();
-        when(playerRepository.findPlayerByUsername(USER_NAME)).thenReturn(Optional.of(player));
-        command = new SpawnCommand(playerRepository, requestSender);
+        when(playerDao.findPlayerByUsername(USER_NAME)).thenReturn(Optional.of(player));
+        command = new SpawnCommand(playerDao, requestSender);
     }
 
     @Test

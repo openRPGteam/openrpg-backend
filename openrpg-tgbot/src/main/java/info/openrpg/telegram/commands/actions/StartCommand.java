@@ -1,7 +1,7 @@
 package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
@@ -17,14 +17,14 @@ import java.util.List;
 public class StartCommand implements ExecutableCommand {
     private static final String FIRST_MESSAGE = "Спасибо за регистрацию";
 
-    private final PlayerRepository playerRepository;
+    private final PlayerDao playerDao;
     private final RequestSender requestSender;
 
     public StartCommand(
-            PlayerRepository playerRepository,
+            PlayerDao playerDao,
             RequestSender requestSender
     ) {
-        this.playerRepository = playerRepository;
+        this.playerDao = playerDao;
         this.requestSender = requestSender;
     }
 
@@ -38,14 +38,14 @@ public class StartCommand implements ExecutableCommand {
                 .userName(user.getUserName())
                 .build();
 
-        playerRepository.savePlayer(player);
+        playerDao.savePlayer(player);
 
 
         List<MessageWrapper> messageWrappers = new ArrayList<>();
         messageWrappers.add(new MessageWrapper(new SendMessage()
                         .setChatId(inputMessage.getChatId())
                         .setText(FIRST_MESSAGE)));
-        messageWrappers.addAll(new SpawnCommand(playerRepository, requestSender).execute(inputMessage));
+        messageWrappers.addAll(new SpawnCommand(playerDao, requestSender).execute(inputMessage));
 
         return messageWrappers;
     }
@@ -54,7 +54,7 @@ public class StartCommand implements ExecutableCommand {
     public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
         if (e instanceof PersistenceException) {
             if (e.getCause() instanceof ConstraintViolationException) {
-                return new SpawnCommand(playerRepository, requestSender).execute(inputMessage);
+                return new SpawnCommand(playerDao, requestSender).execute(inputMessage);
             }
         }
         return Collections.emptyList();

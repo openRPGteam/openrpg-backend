@@ -1,15 +1,19 @@
 package info.openrpg.database.repositories;
 
+import com.google.inject.Inject;
 import info.openrpg.database.models.Player;
-import lombok.AllArgsConstructor;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
-public class PostgresPlayerRepository implements PlayerRepository {
+public class PostgresPlayerDao implements PlayerDao {
     private final EntityManager entityManager;
+
+    @Inject
+    public PostgresPlayerDao(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public Optional<Player> findPlayerByUsername(String username) {

@@ -3,7 +3,7 @@ package info.openrpg.telegram.commands.actions;
 import com.google.common.base.Joiner;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.database.models.Player;
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.commands.Message;
@@ -21,10 +21,10 @@ public class PlayerInfoCommand implements ExecutableCommand {
     private static final String PLAYER_NAME_HEADER_MESSAGE = "Пидора зовут: ";
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
 
-    private final PlayerRepository playerRepository;
+    private final PlayerDao playerDao;
 
-    public PlayerInfoCommand(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
+    public PlayerInfoCommand(PlayerDao playerDao) {
+        this.playerDao = playerDao;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PlayerInfoCommand implements ExecutableCommand {
     }
 
     private List<MessageWrapper> getPlayerInfo(String userName, Long chatId) {
-        return playerRepository.findPlayerByUsername(userName)
+        return playerDao.findPlayerByUsername(userName)
                 .map(player ->
                         new SendMessage()
                                 .setChatId(chatId)
@@ -58,8 +58,8 @@ public class PlayerInfoCommand implements ExecutableCommand {
     }
 
     private List<MessageWrapper> playersButtonList(int offset, long chatId) {
-        int playersNumber = playerRepository.selectPlayersNumber();
-        List<Player> players = playerRepository.selectPlayerWithOffset(offset, 10);
+        int playersNumber = playerDao.selectPlayersNumber();
+        List<Player> players = playerDao.selectPlayerWithOffset(offset, 10);
         SendMessage sendMessage = new SendMessage()
                 .setText("Список игроков:")
                 .setReplyMarkup(InlineButton.playerList(Command.PLAYER_INFO, players, offset, playersNumber))

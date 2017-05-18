@@ -1,24 +1,14 @@
 package info.openrpg.telegram.commands.actions;
 
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHttpRequest;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import sun.plugin.dom.exception.InvalidStateException;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +19,11 @@ import java.util.Optional;
  * After that the image will be sent as message back to user
  */
 public class MoveCommand implements ExecutableCommand {
-    private final PlayerRepository playerRepository;
+    private final PlayerDao playerDao;
     private final RequestSender requestSender;
 
-    public MoveCommand(PlayerRepository playerRepository, RequestSender requestSender) {
-        this.playerRepository = playerRepository;
+    public MoveCommand(PlayerDao playerDao, RequestSender requestSender) {
+        this.playerDao = playerDao;
         this.requestSender = requestSender;
     }
 
@@ -49,7 +39,7 @@ public class MoveCommand implements ExecutableCommand {
                 .map(message -> {
                     int x = Integer.parseInt(inputMessage.getArgument(1));
                     int y = Integer.parseInt(inputMessage.getArgument(2));
-                    return playerRepository.findPlayerByUsername(inputMessage.getFrom().getUserName())
+                    return playerDao.findPlayerByUsername(inputMessage.getFrom().getUserName())
                             .map(player -> sendMoveCommandToImageServer(inputMessage, x, y))
                             .orElseGet(Collections::emptyList);
                 })

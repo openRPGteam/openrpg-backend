@@ -3,7 +3,7 @@ package info.openrpg.telegram.commands.actions;
 import com.google.common.base.Joiner;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.database.models.Player;
-import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
@@ -19,10 +19,10 @@ public class PeekPlayerCommand implements ExecutableCommand {
     private static final String UNKNOWN_PLAYER_MESSAGE = "Ты попытался потыкать палкой несуществующего пидора.";
     private static final String PLAYER_PEEKED_MESSAGE = "Тебя потыкал палкой";
 
-    private final PlayerRepository playerRepository;
+    private final PlayerDao playerDao;
 
-    public PeekPlayerCommand(PlayerRepository playerRepository) {
-        this.playerRepository = playerRepository;
+    public PeekPlayerCommand(PlayerDao playerDao) {
+        this.playerDao = playerDao;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PeekPlayerCommand implements ExecutableCommand {
     }
 
     private SendMessage getPlayerByUsername(User from, String userName, Long chatId) {
-        return playerRepository.findPlayerByUsername(userName)
+        return playerDao.findPlayerByUsername(userName)
                 .map(player -> new SendMessage()
                         .setChatId(String.valueOf(player.getId()))
                         .setText(JOINER.join(PLAYER_PEEKED_MESSAGE, "@".concat(from.getUserName())))
@@ -54,8 +54,8 @@ public class PeekPlayerCommand implements ExecutableCommand {
     }
 
     private List<MessageWrapper> playersButtonList(int offset, long chatId) {
-        int playersNumber = playerRepository.selectPlayersNumber();
-        List<Player> players = playerRepository.selectPlayerWithOffset(offset, 10);
+        int playersNumber = playerDao.selectPlayersNumber();
+        List<Player> players = playerDao.selectPlayerWithOffset(offset, 10);
         SendMessage sendMessage = new SendMessage()
                 .setText("Список игроков:")
                 .setReplyMarkup(InlineButton.playerList(Command.PEEK_PLAYER, players, offset, playersNumber))

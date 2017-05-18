@@ -37,8 +37,8 @@ public class World implements IWorld {
     }
 
     private void runGlobalLoop() {
-        ScheduledThreadPoolExecutor globalLoop = (ScheduledThreadPoolExecutor)
-                Executors.newScheduledThreadPool(50);
+        ScheduledExecutorService globalLoop = Executors.newSingleThreadScheduledExecutor();
+        ExecutorService taskPool = Executors.newCachedThreadPool();
 
         Runnable pereodicQueueExecutor = new Runnable() {
             @Override
@@ -52,8 +52,7 @@ public class World implements IWorld {
                             System.out.println(Thread.currentThread().getName() + " preiodic tread out " + new Date());
                             return;
                         }
-                        ;
-                        globalLoop.execute(new Runnable() {
+                        taskPool.execute(new Runnable() {
                             @Override
                             public void run() {
                                 System.out.println(Thread.currentThread().getName() + " internal tread start " + new Date());

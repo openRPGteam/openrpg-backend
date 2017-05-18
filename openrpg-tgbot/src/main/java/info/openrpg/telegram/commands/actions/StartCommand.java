@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerRepository;
+import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
 import org.hibernate.exception.ConstraintViolationException;
@@ -9,18 +10,22 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.User;
 
 import javax.persistence.PersistenceException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class StartCommand implements ExecutableCommand {
-
-    private static final String ALREADY_REGISTERED_MESSAGE = "Ты уже зарегистрирован";
     private static final String FIRST_MESSAGE = "Спасибо за регистрацию";
 
     private final PlayerRepository playerRepository;
+    private final RequestSender requestSender;
 
-    public StartCommand(PlayerRepository playerRepository) {
+    public StartCommand(
+            PlayerRepository playerRepository,
+            RequestSender requestSender
+    ) {
         this.playerRepository = playerRepository;
+        this.requestSender = requestSender;
     }
 
     @Override
@@ -35,22 +40,21 @@ public class StartCommand implements ExecutableCommand {
 
         playerRepository.savePlayer(player);
 
-        return Collections.singletonList(new MessageWrapper(new SendMessage()
-                .setChatId(inputMessage.getChatId())
-                .setText(FIRST_MESSAGE))
-        );
+
+        List<MessageWrapper> messageWrappers = new ArrayList<>();
+        messageWrappers.add(new MessageWrapper(new SendMessage()
+                        .setChatId(inputMessage.getChatId())
+                        .setText(FIRST_MESSAGE)));
+        messageWrappers.addAll(new SpawnCommand(playerRepository, requestSender).execute(inputMessage));
+
+        return messageWrappers;
     }
 
     @Override
     public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
         if (e instanceof PersistenceException) {
             if (e.getCause() instanceof ConstraintViolationException) {
-                return Collections.singletonList(
-                        new MessageWrapper(new SendMessage()
-                                .setChatId(inputMessage.getChatId())
-                                .setText(ALREADY_REGISTERED_MESSAGE)
-                        )
-                );
+                return new SpawnCommand(playerRepository, requestSender).execute(inputMessage);
             }
         }
         return Collections.emptyList();

@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands;
 
 import info.openrpg.database.repositories.PostgresPlayerRepository;
 import info.openrpg.database.repositories.PostrgresMessageRepository;
+import info.openrpg.image.processing.HTTPRequestSender;
 import info.openrpg.telegram.commands.actions.DoNothingCommand;
 import info.openrpg.telegram.commands.actions.ExecutableCommand;
 import info.openrpg.telegram.commands.actions.HelpCommand;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum TelegramCommand {
     NOTHING("", entityManager -> new DoNothingCommand()),
-    START(Command.START, entityManager -> new StartCommand(new PostgresPlayerRepository(entityManager))),
+    START(Command.START, entityManager -> new StartCommand(new PostgresPlayerRepository(entityManager), new HTTPRequestSender())),
     HELP(Command.HELP, entityManager -> new HelpCommand()),
     PLAYER_INFO(Command.PLAYER_INFO, entityManager -> new PlayerInfoCommand(new PostgresPlayerRepository(entityManager))),
     PEEK_PLAYER(Command.PEEK_PLAYER, entityManager -> new PeekPlayerCommand(new PostgresPlayerRepository(entityManager))),
@@ -34,8 +35,8 @@ public enum TelegramCommand {
                     new PostrgresMessageRepository(entityManager)
             )
     ),
-    SPAWN(Command.SPAWN, entityManager -> new SpawnCommand(new PostgresPlayerRepository(entityManager))),
-    MOVE(Command.MOVE, entityManager -> new MoveCommand(new PostgresPlayerRepository(entityManager)));
+    SPAWN(Command.SPAWN, entityManager -> new SpawnCommand(new PostgresPlayerRepository(entityManager), new HTTPRequestSender())),
+    MOVE(Command.MOVE, entityManager -> new MoveCommand(new PostgresPlayerRepository(entityManager), new HTTPRequestSender()));
 
     private final String commandPrefix;
     private final Function<EntityManager, ExecutableCommand> executableCommand;

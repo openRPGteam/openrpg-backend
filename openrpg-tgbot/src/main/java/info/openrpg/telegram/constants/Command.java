@@ -8,4 +8,5 @@ public class Command {
     public static final String PEEK_PLAYER = "/peek_player";
     public static final String SPAWN = "/spawn";
     public static final String MOVE = "/move";
+    public static final String ECHO = "/echo";
 }

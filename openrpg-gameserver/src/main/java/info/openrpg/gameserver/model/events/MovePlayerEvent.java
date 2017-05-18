@@ -5,11 +5,11 @@ import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.model.actors.Player;
 
 public class MovePlayerEvent implements IEvent {
-    private final Player player;
+    private final int playerId;
     private final MoveDirections moveDirections;
 
-    public MovePlayerEvent(Player player, MoveDirections moveDirections) {
-        this.player = player;
+    public MovePlayerEvent(int playerId, MoveDirections moveDirections) {
+        this.playerId = playerId;
         this.moveDirections = moveDirections;
     }
 
@@ -20,7 +20,12 @@ public class MovePlayerEvent implements IEvent {
 
     @Override
     public Player getPlayer() {
-        return player;
+        return null;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return playerId;
     }
 
     @Override

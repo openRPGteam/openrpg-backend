@@ -22,6 +22,11 @@ public class AddPlayerEvent implements IEvent {
     }
 
     @Override
+    public int getPlayerId() {
+        return player.getPlayerId();
+    }
+
+    @Override
     public MoveDirections getDirection() {
         return null;
     }

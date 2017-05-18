@@ -9,5 +9,7 @@ public interface IEvent {
 
     Player getPlayer();
 
+    int getPlayerId();
+
     MoveDirections getDirection();
 }

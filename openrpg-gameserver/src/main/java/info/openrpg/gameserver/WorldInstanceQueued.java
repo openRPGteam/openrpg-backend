@@ -27,7 +27,7 @@ public class WorldInstanceQueued {
     }
 
     public void removePlayer(Player player) {
-        RemovePlayerEvent event = new RemovePlayerEvent(player);
+        RemovePlayerEvent event = new RemovePlayerEvent(player.getPlayerId());
         world.addEvent(event);
     }
 
@@ -37,7 +37,7 @@ public class WorldInstanceQueued {
 
 
     public void movePlayer(Player player, MoveDirections moveDirections) {
-        MovePlayerEvent event = new MovePlayerEvent(player, moveDirections);
+        MovePlayerEvent event = new MovePlayerEvent(player.getPlayerId(), moveDirections);
         world.addEvent(event);
     }
 

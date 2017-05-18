@@ -6,12 +6,10 @@ import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.events.IEvent;
 
+import java.util.Date;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Queue;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class World implements IWorld {
@@ -29,65 +27,67 @@ public class World implements IWorld {
     //карта мира
     private final Chunk[][] worldChunks;
 
-    private final ArrayBlockingQueue<IEvent> eventsQuene;
-    private final ReentrantLock eventsQueueLock = new ReentrantLock();
+    //очередь событий
+    private final Queue<IEvent> eventsQuene = new ConcurrentLinkedQueue();
+    ;
 
     public World() {
         worldChunks = initchunks();
-        eventsQuene = new ArrayBlockingQueue(100);
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
+        runGlobalLoop();
+    }
+
+    private void runGlobalLoop() {
+        ScheduledThreadPoolExecutor globalLoop = (ScheduledThreadPoolExecutor)
+                Executors.newScheduledThreadPool(50);
+
+        Runnable pereodicQueueExecutor = new Runnable() {
             @Override
             public void run() {
-                if (!eventsQueueLock.tryLock()) {
-                    return;
-                }
-                LOG.info("start processing blocked queue");
-                try {
+                System.out.println(Thread.currentThread().getName() + " preiodic tread in " + new Date());
+                synchronized (eventsQuene) {
+                    //LOG.info("start processing blocked queue");
                     while (true) {
                         IEvent event = eventsQuene.poll();
-                        if (event == null) return;
-                        try {
-                            switch (event.getEventType()) {
-                                case ADDPLAYER: {
-                                    addPlayer(event.getPlayer());
-                                    break;
-                                }
-                                case REMOVEPLAYER: {
-                                    removePlayer(event.getPlayer());
-                                    break;
-                                }
-                                case MOVEPLAYER: {
-                                    getPlayerById(event.getPlayer().getPlayerId()).move(event.getDirection());
-                                    break;
-                                }
-                            }
-                        } catch (Exception e) {
-                            LOG.severe("Exception processing event queue");
+                        if (event == null) {
+                            System.out.println(Thread.currentThread().getName() + " preiodic tread out " + new Date());
+                            return;
                         }
-
+                        ;
+                        globalLoop.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                System.out.println(Thread.currentThread().getName() + " internal tread start " + new Date());
+                                try {
+                                    switch (event.getEventType()) {
+                                        case ADDPLAYER: {
+                                            addPlayer(event.getPlayer());
+                                            break;
+                                        }
+                                        case REMOVEPLAYER: {
+                                            removePlayerById(event.getPlayerId());
+                                            break;
+                                        }
+                                        case MOVEPLAYER: {
+                                            getPlayerById(event.getPlayerId()).move(event.getDirection());
+                                            break;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    LOG.severe("Exception processing event queue");
+                                }
+                                System.out.println(Thread.currentThread().getName() + " tread stop " + new Date());
+                            }
+                        });
                     }
-
-                } finally {
-                    LOG.info("stop processing blocked queue");
-                    eventsQueueLock.unlock();
                 }
-
             }
         };
-        timer.schedule(timerTask, 0, 5000);
 
+        ScheduledFuture<?> periodicFuture = globalLoop.scheduleWithFixedDelay(pereodicQueueExecutor, 0, 5, TimeUnit.SECONDS);
     }
 
     public void addEvent(IEvent event) {
-        if (!eventsQueueLock.tryLock()) {
-            return;
-        }
-        try {
-            eventsQuene.add(event);
-        } finally {
-            eventsQueueLock.unlock();
-        }
+        eventsQuene.add(event);
     }
 
     //TODO из базы подгружать

@@ -5,10 +5,10 @@ import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.model.actors.Player;
 
 public class RemovePlayerEvent implements IEvent {
-    private final Player player;
+    private final int playerId;
 
-    public RemovePlayerEvent(Player player) {
-        this.player = player;
+    public RemovePlayerEvent(int playerId) {
+        this.playerId = playerId;
     }
 
     @Override
@@ -18,7 +18,12 @@ public class RemovePlayerEvent implements IEvent {
 
     @Override
     public Player getPlayer() {
-        return player;
+        return null;
+    }
+
+    @Override
+    public int getPlayerId() {
+        return playerId;
     }
 
     @Override

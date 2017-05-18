@@ -1,10 +1,7 @@
 package info.openrpg.gameserver.model.actors;
 
 import info.openrpg.gameserver.enums.GameClass;
-import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.enums.Race;
-import info.openrpg.gameserver.inject.IWorld;
-import info.openrpg.gameserver.model.behavior.PlayerCollision;
 import info.openrpg.gameserver.model.world.Location;
 
 import java.io.Serializable;

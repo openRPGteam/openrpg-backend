@@ -7,15 +7,16 @@ import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.events.IEvent;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class World implements IWorld {
     public static final Logger LOG = Logger.getLogger(World.class.getSimpleName());
-    // Размер чанка 100x100
-    public final int CHUNK_SIZE = 10;
+    // Размер чанка 9x9
+    public final int CHUNK_SIZE = 9;
     // Размер карты 10х10 чанков
     public final int MAP_SIZE_X = 10;
 
@@ -28,8 +29,7 @@ public class World implements IWorld {
     private final Chunk[][] worldChunks;
 
     //очередь событий
-    private final Queue<IEvent> eventsQuene = new ConcurrentLinkedQueue();
-    ;
+    private final LinkedBlockingQueue<IEvent> eventsQuene = new LinkedBlockingQueue();
 
     public World() {
         worldChunks = initchunks();
@@ -38,55 +38,60 @@ public class World implements IWorld {
 
     private void runGlobalLoop() {
         ScheduledExecutorService globalLoop = Executors.newSingleThreadScheduledExecutor();
-        ExecutorService taskPool = Executors.newCachedThreadPool();
+        ExecutorService taskPool = Executors.newFixedThreadPool(100);
 
-        Runnable pereodicQueueExecutor = new Runnable() {
-            @Override
-            public void run() {
-                System.out.println(Thread.currentThread().getName() + " preiodic tread in " + new Date());
+        Runnable periodicQueueExecutor = () -> {
+            System.out.println(Thread.currentThread().getName() + " preiodic tread in " + new Date());
+
+            while (!Thread.currentThread().isInterrupted()) {
+                Set<IEvent> eventHashSet = new LinkedHashSet<>();
                 synchronized (eventsQuene) {
-                    //LOG.info("start processing blocked queue");
-                    while (true) {
-                        IEvent event = eventsQuene.poll();
-                        if (event == null) {
-                            System.out.println(Thread.currentThread().getName() + " preiodic tread out " + new Date());
-                            return;
-                        }
-                        taskPool.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                System.out.println(Thread.currentThread().getName() + " internal tread start " + new Date());
-                                try {
-                                    switch (event.getEventType()) {
-                                        case ADDPLAYER: {
-                                            addPlayer(event.getPlayer());
-                                            break;
-                                        }
-                                        case REMOVEPLAYER: {
-                                            removePlayerById(event.getPlayerId());
-                                            break;
-                                        }
-                                        case MOVEPLAYER: {
-                                            getPlayerById(event.getPlayerId()).move(event.getDirection());
-                                            break;
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    LOG.severe("Exception processing event queue");
-                                }
-                                System.out.println(Thread.currentThread().getName() + " tread stop " + new Date());
-                            }
-                        });
+                    try {
+                        eventsQuene.drainTo(eventHashSet);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
+                }
+
+                for (IEvent event : eventHashSet) {
+                    System.out.println(Thread.currentThread().getName() + " with " + event.getEventType() + " " + event.getDirection() + " tread start " + new Date());
+                    try {
+                        switch (event.getEventType()) {
+                             /*   case ADDPLAYER: {
+                                    addPlayer(event.getPlayer());
+                                    break;
+                                }
+                                case REMOVEPLAYER: {
+                                    removePlayerById(event.getPlayerId());
+                                    break;
+                                } */
+                            case MOVEPLAYER: {
+                                taskPool.execute(() -> {
+                                    System.out.println(Thread.currentThread().getName() + " " + getPlayerById(event.getPlayerId()).getName() + " to " + event.getDirection());
+                                    getPlayerById(event.getPlayerId()).move(event.getDirection());
+                                });
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOG.severe("Exception processing event queue" + e.getMessage());
+                    }
+                    System.out.println(Thread.currentThread().getName() + " tread stop " + new Date());
                 }
             }
         };
-
-        ScheduledFuture<?> periodicFuture = globalLoop.scheduleWithFixedDelay(pereodicQueueExecutor, 0, 5, TimeUnit.SECONDS);
+        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 5, 5, TimeUnit.SECONDS);
     }
 
     public void addEvent(IEvent event) {
-        eventsQuene.add(event);
+        try {
+            synchronized (eventsQuene) {
+                eventsQuene.put(event);
+                System.out.println(Thread.currentThread().getName() + " add event " + new Date());
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     //TODO из базы подгружать

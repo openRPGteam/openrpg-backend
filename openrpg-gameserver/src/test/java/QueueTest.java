@@ -28,7 +28,7 @@ public class QueueTest {
                 new PlayerStats(1, 1),
                 GameClass.ARCHER, Race.HUMAN, 2);
         player3 = new Player("cheburek",
-                new Location(9, 9, 9, 9),
+                new Location(1, 1, 1, 1),
                 new PlayerStats(1, 1),
                 GameClass.KNIGHT, Race.HUMAN, 3);
     }
@@ -36,28 +36,16 @@ public class QueueTest {
     @Test
     public void RunTest() throws InterruptedException {
         world.addPlayer(player1);
-        world.addPlayer(player1);
         world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.addPlayer(player2);
-        world.getPlayersCount();
-        for (Map.Entry<Integer, Player> p : world.getAllPlayers().entrySet()) {
-            System.out.println(p.getValue().getName() + " - " + p.getValue().getCurLocation().toString());
-        }
-        Thread.sleep(10000);
-        for (Map.Entry<Integer, Player> p : world.getAllPlayers().entrySet()) {
-            System.out.println(p.getValue().getName() + " - " + p.getValue().getCurLocation().toString());
-        }
         world.addPlayer(player3);
-        world.movePlayer(player1, MoveDirections.EAST);
+        world.movePlayer(player3, MoveDirections.EAST);
+        world.movePlayer(player3, MoveDirections.WEST);
+        world.movePlayer(player1, MoveDirections.WEST);
+        world.movePlayer(player1, MoveDirections.NORTHWEST);
+        world.movePlayer(player2, MoveDirections.EAST);
+        world.movePlayer(player2, MoveDirections.WEST);
         Thread.sleep(10000);
-        world.getPlayersCount();
+
         for (Map.Entry<Integer, Player> p : world.getAllPlayers().entrySet()) {
             System.out.println(p.getValue().getName() + " - " + p.getValue().getCurLocation().toString());
         }

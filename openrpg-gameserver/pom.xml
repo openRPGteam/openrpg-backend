@@ -69,7 +69,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass></mainClass>
+                            <mainClass>online.openrpg.Starter</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

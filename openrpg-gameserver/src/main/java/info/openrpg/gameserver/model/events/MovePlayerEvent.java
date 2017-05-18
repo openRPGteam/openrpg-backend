@@ -32,4 +32,14 @@ public class MovePlayerEvent implements IEvent {
     public MoveDirections getDirection() {
         return moveDirections;
     }
+
+    @Override
+    public int hashCode() {
+        return playerId;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return playerId == ((RemovePlayerEvent) obj).getPlayerId();
+    }
 }

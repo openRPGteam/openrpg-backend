@@ -35,6 +35,7 @@ public abstract class AbstractActor implements MoveableActor {
         //TODO нужно как то отрефакторить
         PlayerCollision pc = new PlayerCollision(this.currentWorld);
         Location newloc = null;
+
         switch (direction) {
             case NORTH: {
                 if (getCurLocation().getX() == 0)

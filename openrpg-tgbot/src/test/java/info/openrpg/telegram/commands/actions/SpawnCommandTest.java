@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +37,7 @@ public class SpawnCommandTest {
     public void setUp() throws Exception {
         PlayerDao playerDao = mock(PlayerDao.class);
         RequestSender requestSender = mock(RequestSender.class);
-        when(requestSender.spawnPlayer(CHAT_ID)).thenReturn(Optional.of(STREAM));
+        when(requestSender.createImage(any())).thenReturn(Optional.of(STREAM));
 
         Player player = Player.builder()
                 .firstName("Dark")

@@ -8,6 +8,7 @@ public class ChunkDTO {
     @JsonProperty(value = "cells_per_axle")
     private int cellsPerAxle;
 
+    @JsonProperty(value = "grid")
     private boolean grid;
 
     @JsonProperty(value = "array")

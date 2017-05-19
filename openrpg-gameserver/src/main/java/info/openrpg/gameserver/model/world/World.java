@@ -2,6 +2,7 @@ package info.openrpg.gameserver.model.world;
 
 import info.openrpg.gameserver.enums.TerrainType;
 import info.openrpg.gameserver.inject.IWorld;
+import info.openrpg.gameserver.model.actors.AbstractActor;
 import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.events.IEvent;
@@ -10,6 +11,7 @@ import info.openrpg.gameserver.model.events.PlayerEvent;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
@@ -120,14 +122,15 @@ public class World implements IWorld {
 
 
     @Override
-    public void addPlayer(Player player) {
+    public boolean addPlayer(Player player) {
         player.bindWorld(this);
         if (players.containsKey(player.getPlayerId())) {
             LOG.warning("Player " + player.getName() + " already in playersmap");
-            return;
+            return false;
         }
         players.put(player.getPlayerId(), player);
         LOG.info("Player " + player.getName() + " put in playersmap");
+        return true;
     }
 
     @Override
@@ -193,6 +196,14 @@ public class World implements IWorld {
     public Chunk getChunkByXY(int chunk_x, int chunk_y) {
 
         return worldChunks[chunk_x][chunk_y];
+    }
+
+    @Override
+    public Optional<Chunk> getChunkByUserId(int id) {
+        return Optional.ofNullable(getAllPlayers().get(id))
+                .map(AbstractActor::getCurLocation)
+                .map(location -> Optional.of(worldChunks[location.getChunk_x()][location.getChunk_y()]))
+                .orElseGet(Optional::empty);
     }
 
     public int getChunkSize() {

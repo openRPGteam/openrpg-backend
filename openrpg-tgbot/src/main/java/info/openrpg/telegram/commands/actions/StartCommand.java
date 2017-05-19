@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerDao;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
@@ -29,7 +30,7 @@ public class StartCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> execute(InputMessage inputMessage) {
+    public List<MessageWrapper> execute(InputMessage inputMessage, WorldInstance worldInstance) {
         User user = inputMessage.getFrom();
         Player player = Player.builder()
                 .id(user.getId())
@@ -45,16 +46,16 @@ public class StartCommand implements ExecutableCommand {
         messageWrappers.add(new MessageWrapper(new SendMessage()
                         .setChatId(inputMessage.getChatId())
                         .setText(FIRST_MESSAGE)));
-        messageWrappers.addAll(new SpawnCommand(playerDao, requestSender).execute(inputMessage));
+        messageWrappers.addAll(new SpawnCommand(playerDao, requestSender).execute(inputMessage, worldInstance));
 
         return messageWrappers;
     }
 
     @Override
-    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
+    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage, WorldInstance worldInstance) {
         if (e instanceof PersistenceException) {
             if (e.getCause() instanceof ConstraintViolationException) {
-                return new SpawnCommand(playerDao, requestSender).execute(inputMessage);
+                return new SpawnCommand(playerDao, requestSender).execute(inputMessage, worldInstance);
             }
         }
         return Collections.emptyList();

@@ -6,6 +6,7 @@ import info.openrpg.database.models.Message;
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.MessageDao;
 import info.openrpg.database.repositories.PlayerDao;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.InputMessage;
@@ -34,7 +35,7 @@ public class SendMessageCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> execute(InputMessage inputMessage) {
+    public List<MessageWrapper> execute(InputMessage inputMessage, WorldInstance worldInstance) {
         return Optional.of(inputMessage)
                 .filter(iM -> iM.hasArguments(2))
                 .map(iM -> iM.getArgument(1))
@@ -64,7 +65,7 @@ public class SendMessageCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
+    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage, WorldInstance worldInstance) {
         return Collections.emptyList();
     }
 

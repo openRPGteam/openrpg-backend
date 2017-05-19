@@ -1,6 +1,7 @@
 package info.openrpg.telegram.commands.actions;
 
 import com.google.common.base.Joiner;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerDao;
@@ -26,7 +27,7 @@ public class PeekPlayerCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> execute(InputMessage inputMessage) {
+    public List<MessageWrapper> execute(InputMessage inputMessage, WorldInstance worldInstance) {
         return Optional.of(inputMessage)
                 .filter(iM -> iM.hasArguments(1))
                 .map(iM -> iM.getArgument(1))
@@ -37,7 +38,7 @@ public class PeekPlayerCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
+    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage, WorldInstance worldInstance) {
         return Collections.emptyList();
     }
 

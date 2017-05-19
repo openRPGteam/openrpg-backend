@@ -3,6 +3,7 @@ package info.openrpg.telegram;
 import info.openrpg.database.models.Chat;
 import info.openrpg.database.models.Message;
 import info.openrpg.database.models.Player;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.commands.TelegramCommand;
 import info.openrpg.telegram.commands.actions.ExecutableCommand;
@@ -29,6 +30,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     private Credentials credentials;
     private SessionFactory sessionFactory;
     private EntityManager entityManager;
+    private WorldInstance worldInstance;
 
     public OpenRpgBot(Credentials credentials, Properties properties) {
         this.credentials = credentials;
@@ -39,6 +41,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
                 .addAnnotatedClass(Chat.class)
                 .buildSessionFactory();
         this.entityManager = sessionFactory.createEntityManager();
+        this.worldInstance = new WorldInstance();
     }
 
     @Override
@@ -144,7 +147,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
         entityManager.getTransaction().begin();
         ExecutableCommand command = telegramCommand.getExecutableCommand(entityManager);
         try {
-            List<MessageWrapper> sendMessageList = command.execute(inputMessage);
+            List<MessageWrapper> sendMessageList = command.execute(inputMessage, worldInstance);
             entityManager.getTransaction().commit();
             sendMessageList.forEach(this::sendMessageInWrapper);
         } catch (RuntimeException e) {
@@ -166,7 +169,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
             InputMessage inputMessage
     ) {
         entityManager.getTransaction().rollback();
-        Optional.of(executableCommand.handleCrash(e, inputMessage))
+        Optional.of(executableCommand.handleCrash(e, inputMessage, worldInstance))
                 .filter(sendMessages -> !sendMessages.isEmpty())
                 .orElseGet(() -> {
                     logger.warning(e.getClass().getName());

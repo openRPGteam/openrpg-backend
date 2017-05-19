@@ -3,6 +3,7 @@ package info.openrpg.telegram.commands.actions;
 import com.google.common.base.Joiner;
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerDao;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.constants.Command;
@@ -32,6 +33,7 @@ public class MoveCommandTest {
     private static final InputStream STREAM = mock(InputStream.class);
 
     private MoveCommand command;
+    private WorldInstance worldInstance;
 
     @BeforeClass
     public void setUp() throws Exception {
@@ -46,6 +48,7 @@ public class MoveCommandTest {
                 .id(CHAT_ID.intValue())
                 .build();
         when(playerDao.findPlayerByUsername(USER_NAME)).thenReturn(Optional.of(player));
+        worldInstance = new WorldInstance();
         command = new MoveCommand(playerDao, requestSender);
     }
 
@@ -54,7 +57,7 @@ public class MoveCommandTest {
         User user = mock(User.class);
         when(user.getUserName()).thenReturn(USER_NAME);
         InputMessage inputMessage = new InputMessage(Command.MOVE, CHAT_ID, user);
-        List<MessageWrapper> wrappers = command.execute(inputMessage);
+        List<MessageWrapper> wrappers = command.execute(inputMessage, worldInstance);
 
         Assert.assertFalse(wrappers.isEmpty());
         Assert.assertTrue(wrappers.size() == 1);
@@ -72,7 +75,7 @@ public class MoveCommandTest {
                 CHAT_ID,
                 user
         );
-        List<MessageWrapper> wrappers = command.execute(inputMessage);
+        List<MessageWrapper> wrappers = command.execute(inputMessage, worldInstance);
 
         Assert.assertFalse(wrappers.isEmpty());
         SendPhoto photo = wrappers.get(0).getPhoto();
@@ -85,7 +88,7 @@ public class MoveCommandTest {
     @Test
     public void testHandleCrash() throws Exception {
         InputMessage message = new InputMessage("", 13L, new User());
-        Assert.assertEquals(command.handleCrash(new RuntimeException(), message), Collections.emptyList());
+        Assert.assertEquals(command.handleCrash(new RuntimeException(), message, worldInstance), Collections.emptyList());
     }
 
 }

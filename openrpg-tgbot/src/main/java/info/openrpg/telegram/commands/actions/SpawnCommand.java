@@ -4,15 +4,12 @@ import info.openrpg.database.repositories.PlayerDao;
 import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.gameserver.enums.GameClass;
 import info.openrpg.gameserver.enums.Race;
-import info.openrpg.gameserver.enums.TerrainType;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.actors.PlayerStats;
 import info.openrpg.gameserver.model.world.Chunk;
 import info.openrpg.gameserver.model.world.Location;
 import info.openrpg.image.processing.DTOMapper;
-import info.openrpg.image.processing.RaceMapper;
 import info.openrpg.image.processing.RequestSender;
-import info.openrpg.image.processing.dto.CellDTO;
 import info.openrpg.image.processing.dto.ChunkDTO;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.io.InlineButton;
@@ -20,7 +17,6 @@ import info.openrpg.telegram.io.InputMessage;
 import info.openrpg.telegram.io.MessageWrapper;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

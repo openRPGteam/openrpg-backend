@@ -57,4 +57,12 @@ public class WorldInstanceQueued {
     public int getWorldDelay() {
         return world.GLOBALTIME;
     }
+
+    public int getChunkSize() {
+        return world.CHUNK_SIZE;
+    }
+
+    public int getMapSize() {
+        return world.MAP_SIZE_X;
+    }
 }

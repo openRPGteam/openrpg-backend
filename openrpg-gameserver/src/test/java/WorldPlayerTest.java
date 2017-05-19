@@ -10,16 +10,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class WorldPlayerTest {
+    public static final int delay = 1;
     private WorldInstanceQueued world;
     private Player player1;
     private Player player2;
     private Player player3;
     private int queueDelay;
+    private int chunkSize;
+    private int mapSize;
 
     @Before
     public void init() {
         world = new WorldInstanceQueued();
-        this.queueDelay = (world.getWorldDelay() + 1) * 1000;
+        this.queueDelay = (world.getWorldDelay() + delay) * 1000;
+        this.chunkSize = world.getChunkSize();
+        this.mapSize = world.getMapSize();
         player1 = new Player("lol",
                 new Location(1, 1, 1, 1),
                 new PlayerStats(1, 1),
@@ -29,7 +34,7 @@ public class WorldPlayerTest {
                 new PlayerStats(1, 1),
                 GameClass.ARCHER, Race.HUMAN, 2);
         player3 = new Player("cheburek",
-                new Location(9, 9, 9, 9),
+                new Location(chunkSize - 1, chunkSize - 1, mapSize - 1, mapSize - 1),
                 new PlayerStats(1, 1),
                 GameClass.KNIGHT, Race.HUMAN, 3);
     }
@@ -75,9 +80,9 @@ public class WorldPlayerTest {
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{1, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
 
-        world.movePlayer(player1, MoveDirections.WEST); //1,9,1,0
+        world.movePlayer(player1, MoveDirections.WEST); //1,8,1,0
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{1, 9, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{1, chunkSize - 1, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
@@ -88,9 +93,9 @@ public class WorldPlayerTest {
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{0, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
 
-        world.movePlayer(player1, MoveDirections.NORTH); //9,1,0,1
+        world.movePlayer(player1, MoveDirections.NORTH); //8,1,0,1
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{9, 1, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{chunkSize - 1, 1, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
@@ -114,9 +119,9 @@ public class WorldPlayerTest {
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{0, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
 
-        world.movePlayer(player1, MoveDirections.NORTHEAST); //9,3,0,1
+        world.movePlayer(player1, MoveDirections.NORTHEAST); //8,3,0,1
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{9, 3, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{chunkSize - 1, 3, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
@@ -127,9 +132,9 @@ public class WorldPlayerTest {
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{0, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
 
-        world.movePlayer(player1, MoveDirections.NORTHWEST); //9,9,0,0
+        world.movePlayer(player1, MoveDirections.NORTHWEST); //8,8,0,0
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{9, 9, 0, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{chunkSize - 1, chunkSize - 1, 0, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
@@ -140,9 +145,9 @@ public class WorldPlayerTest {
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{2, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
 
-        world.movePlayer(player1, MoveDirections.SOUTHWEST); //3,9,1,0
+        world.movePlayer(player1, MoveDirections.SOUTHWEST); //3,8,1,0
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{3, 9, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{3, chunkSize - 1, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
@@ -172,11 +177,11 @@ public class WorldPlayerTest {
     @Test
     public void moveTryAboveMax() throws InterruptedException {
         //попытка выйти за пределы карты выше лимита
-        world.addPlayer(player3); //9,9,9,9
+        world.addPlayer(player3); //8,8,8,8
         world.movePlayer(player3, MoveDirections.SOUTH);
         world.movePlayer(player3, MoveDirections.EAST);
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{9, 9, 9, 9}, world.getAllPlayers().get(player3.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{chunkSize - 1, chunkSize - 1, chunkSize - 1, chunkSize - 1}, world.getAllPlayers().get(player3.getPlayerId()).getCurLocation().asArray());
     }
 
 }

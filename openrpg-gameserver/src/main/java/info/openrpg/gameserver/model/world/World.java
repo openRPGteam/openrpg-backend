@@ -6,6 +6,7 @@ import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.actors.AbstractActor;
 import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
+import info.openrpg.gameserver.model.events.IEvent;
 import info.openrpg.gameserver.model.events.PlayerEvent;
 
 import java.util.*;
@@ -21,7 +22,7 @@ public class World implements IWorld {
     public final int MAP_SIZE_X = 10;
 
     //время глобального тика
-    public final int GLOBALTIME = 3;
+    public final int GLOBALTIME = 5;
 
     //хешмап для игроков
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
@@ -32,7 +33,7 @@ public class World implements IWorld {
     private final Chunk[][] worldChunks;
 
     //очередь событий
-    private final LinkedBlockingQueue<PlayerEvent> eventsQuene = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<IEvent> eventsQuene = new LinkedBlockingQueue<>();
 
     public World() {
         worldChunks = initchunks();
@@ -47,7 +48,7 @@ public class World implements IWorld {
             System.out.println(Thread.currentThread().getName() + " preiodic tread in " + new Date());
 
             while (!Thread.currentThread().isInterrupted()) {
-                Set<PlayerEvent> eventHashSet = new LinkedHashSet<>();
+                Set<IEvent> eventHashSet = new LinkedHashSet<>();
                 synchronized (eventsQuene) {
                     try {
                         eventsQuene.drainTo(eventHashSet);
@@ -55,32 +56,20 @@ public class World implements IWorld {
                         System.out.println("EXCEPTION " + e.getMessage());
                     }
                 }
-                LinkedHashSet<PlayerEvent> addPlayerEvents = eventHashSet.stream()
+                LinkedHashSet<IEvent> addPlayerEvents = eventHashSet.stream()
                         .filter(p -> p.getEventType() == EventType.ADDPLAYER)
                         .collect(Collectors.toCollection(LinkedHashSet::new));
                 addPlayerEvents.forEach(e -> taskPool.execute(() -> addPlayer(e.getPlayer())));
+                eventHashSet.removeAll(addPlayerEvents);
 
-                for (PlayerEvent event : eventHashSet) {
-                    System.out.println(Thread.currentThread().getName() + " with " + event.getEventType() + " " + event.getDirection() + " tread start " + new Date());
-                    try {
-                        switch (event.getEventType()) {
-                            case MOVEPLAYER: {
-                                //System.out.println(Thread.currentThread().getName() + " " + getPlayerById(event.getPlayerId()).getName() + " to " + event.getDirection());
-                                ///getPlayerById(event.getPlayerId()).move(event.getDirection());
-                                taskPool.execute(() -> {
-                                    System.out.println(Thread.currentThread().getName() + " " + getPlayerById(event.getPlayerId()).getName() + " to " + event.getDirection());
-                                    getPlayerById(event.getPlayerId()).move(event.getDirection());
-                                });
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        LOG.severe("Exception processing event queue" + e.getMessage());
-                    }
-                    System.out.println(Thread.currentThread().getName() + " tread stop " + new Date());
-                }
+                LinkedHashSet<IEvent> AnotherPlayerEvents = eventHashSet.stream()
+                        .filter(p ->
+                                p.getEventType() == EventType.ADDPLAYER || p.getEventType() == EventType.REMOVEPLAYER)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                AnotherPlayerEvents.forEach(e -> taskPool.execute(() -> getPlayerById(e.getPlayerId()).move(e.getDirection())));
+                eventHashSet.removeAll(AnotherPlayerEvents);
 
-                LinkedHashSet<PlayerEvent> removePlayerEvents = eventHashSet.stream()
+                LinkedHashSet<IEvent> removePlayerEvents = eventHashSet.stream()
                         .filter(p -> p.getEventType() == EventType.REMOVEPLAYER)
                         .collect(Collectors.toCollection(LinkedHashSet::new));
                 removePlayerEvents.forEach(e -> taskPool.execute(() -> removePlayer(e.getPlayer())));
@@ -89,14 +78,14 @@ public class World implements IWorld {
 
             }
         };
-        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 0, GLOBALTIME, TimeUnit.SECONDS);
+        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, GLOBALTIME, GLOBALTIME, TimeUnit.SECONDS);
     }
 
     public void addEvent(PlayerEvent event) {
         try {
             synchronized (eventsQuene) {
                 eventsQuene.put(event);
-                System.out.println(Thread.currentThread().getName() + " add event " + new Date());
+                System.out.println(Thread.currentThread().getName() + " add event " + event.getEventType() + " " + new Date());
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -8,7 +8,6 @@ import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +31,7 @@ public class MoveCommand implements ExecutableCommand {
      * @param inputMessage user io
      * @param worldInstance
      * @return list with singleton {@link MessageWrapper#MessageWrapper(SendPhoto)} or empty list
-     * @throws InvalidStateException if backend server can't reach image server
+     * @throws IllegalStateException if backend server can't reach image server
      */
     @Override
     public List<MessageWrapper> execute(InputMessage inputMessage, WorldInstance worldInstance) {
@@ -57,12 +56,12 @@ public class MoveCommand implements ExecutableCommand {
      * @param x x value of vector to move
      * @param y y value of vector to move
      * @return list with singleton {@link MessageWrapper#MessageWrapper(SendPhoto)} or empty list
-     * @throws InvalidStateException if backend server can't reach image server
+     * @throws IllegalStateException if backend server can't reach image server
      */
     private List<MessageWrapper> sendMoveCommandToImageServer(InputMessage inputMessage, int x, int y) {
             SendPhoto sendPhoto = new SendPhoto()
                     .setNewPhoto("image", requestSender.sendMove(inputMessage.getChatId(), x, y)
-                            .orElseThrow(() -> new InvalidStateException("Can't reach image-server")))
+                            .orElseThrow(() -> new IllegalStateException("Can't reach image-server")))
                     .setChatId(inputMessage.getChatId())
                     .setReplyMarkup(InlineButton.moveButtonList());
             MessageWrapper messageWrapper = new MessageWrapper(sendPhoto);

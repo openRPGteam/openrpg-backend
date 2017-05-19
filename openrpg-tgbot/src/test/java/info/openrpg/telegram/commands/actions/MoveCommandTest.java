@@ -63,7 +63,8 @@ public class MoveCommandTest {
         Assert.assertTrue(wrappers.size() == 1);
         SendMessage message = wrappers.get(0).getMessage();
         Assert.assertNotNull(message);
-        Assert.assertEquals(message, Message.MOVE_BUTTONS.sendTo(CHAT_ID));
+        Assert.assertEquals(message.getText(), Message.MOVE_BUTTONS.sendTo(CHAT_ID).getText());
+        Assert.assertEquals(Long.valueOf(message.getChatId()), CHAT_ID);
     }
 
     @Test

@@ -5,6 +5,7 @@ import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.events.IEvent;
+import info.openrpg.gameserver.model.events.PlayerEvent;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -29,7 +30,7 @@ public class World implements IWorld {
     private final Chunk[][] worldChunks;
 
     //очередь событий
-    private final LinkedBlockingQueue<IEvent> eventsQuene = new LinkedBlockingQueue();
+    private final LinkedBlockingQueue<PlayerEvent> eventsQuene = new LinkedBlockingQueue<>();
 
     public World() {
         worldChunks = initchunks();
@@ -44,12 +45,12 @@ public class World implements IWorld {
             System.out.println(Thread.currentThread().getName() + " preiodic tread in " + new Date());
 
             while (!Thread.currentThread().isInterrupted()) {
-                Set<IEvent> eventHashSet = new LinkedHashSet<>();
+                Set<PlayerEvent> eventHashSet = new LinkedHashSet<>();
                 synchronized (eventsQuene) {
                     try {
                         eventsQuene.drainTo(eventHashSet);
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("EXCEPTION " + e.getMessage());
                     }
                 }
 
@@ -66,6 +67,8 @@ public class World implements IWorld {
                                     break;
                                 } */
                             case MOVEPLAYER: {
+                                //System.out.println(Thread.currentThread().getName() + " " + getPlayerById(event.getPlayerId()).getName() + " to " + event.getDirection());
+                                ///getPlayerById(event.getPlayerId()).move(event.getDirection());
                                 taskPool.execute(() -> {
                                     System.out.println(Thread.currentThread().getName() + " " + getPlayerById(event.getPlayerId()).getName() + " to " + event.getDirection());
                                     getPlayerById(event.getPlayerId()).move(event.getDirection());
@@ -80,10 +83,10 @@ public class World implements IWorld {
                 }
             }
         };
-        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 5, 5, TimeUnit.SECONDS);
+        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 0, 5, TimeUnit.SECONDS);
     }
 
-    public void addEvent(IEvent event) {
+    public void addEvent(PlayerEvent event) {
         try {
             synchronized (eventsQuene) {
                 eventsQuene.put(event);

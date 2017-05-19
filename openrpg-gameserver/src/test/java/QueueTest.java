@@ -40,10 +40,10 @@ public class QueueTest {
         world.addPlayer(player3);
         world.movePlayer(player3, MoveDirections.EAST);
         world.movePlayer(player3, MoveDirections.WEST);
-        world.movePlayer(player1, MoveDirections.WEST);
-        world.movePlayer(player1, MoveDirections.NORTHWEST);
-        world.movePlayer(player2, MoveDirections.EAST);
+        world.movePlayer(player2, MoveDirections.NORTHWEST);
         world.movePlayer(player2, MoveDirections.WEST);
+        world.movePlayer(player1, MoveDirections.EAST);
+        world.movePlayer(player1, MoveDirections.WEST);
         Thread.sleep(10000);
 
         for (Map.Entry<Integer, Player> p : world.getAllPlayers().entrySet()) {

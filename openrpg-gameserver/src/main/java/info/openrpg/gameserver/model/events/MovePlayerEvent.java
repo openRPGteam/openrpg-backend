@@ -4,12 +4,11 @@ import info.openrpg.gameserver.enums.EventType;
 import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.model.actors.Player;
 
-public class MovePlayerEvent implements IEvent {
-    private final int playerId;
+public class MovePlayerEvent extends PlayerEvent {
     private final MoveDirections moveDirections;
 
-    public MovePlayerEvent(int playerId, MoveDirections moveDirections) {
-        this.playerId = playerId;
+    public MovePlayerEvent(Player player, MoveDirections moveDirections) {
+        super(player);
         this.moveDirections = moveDirections;
     }
 
@@ -19,27 +18,7 @@ public class MovePlayerEvent implements IEvent {
     }
 
     @Override
-    public Player getPlayer() {
-        return null;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    @Override
     public MoveDirections getDirection() {
         return moveDirections;
-    }
-
-    @Override
-    public int hashCode() {
-        return playerId;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return playerId == ((RemovePlayerEvent) obj).getPlayerId();
     }
 }

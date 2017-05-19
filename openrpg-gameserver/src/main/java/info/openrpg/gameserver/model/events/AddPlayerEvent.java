@@ -4,26 +4,14 @@ import info.openrpg.gameserver.enums.EventType;
 import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.model.actors.Player;
 
-public class AddPlayerEvent implements IEvent {
-    private final Player player;
-
+public class AddPlayerEvent extends PlayerEvent {
     public AddPlayerEvent(Player player) {
-        this.player = player;
+        super(player);
     }
 
     @Override
     public EventType getEventType() {
         return EventType.ADDPLAYER;
-    }
-
-    @Override
-    public Player getPlayer() {
-        return player;
-    }
-
-    @Override
-    public int getPlayerId() {
-        return player.getPlayerId();
     }
 
     @Override

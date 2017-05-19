@@ -1,4 +1,4 @@
-import info.openrpg.gameserver.WorldInstance;
+import info.openrpg.gameserver.WorldInstanceQueued;
 import info.openrpg.gameserver.enums.GameClass;
 import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.enums.Race;
@@ -10,14 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class WorldPlayerTest {
-    private WorldInstance world;
+    private WorldInstanceQueued world;
     private Player player1;
     private Player player2;
     private Player player3;
 
     @Before
     public void init() {
-        world = new WorldInstance();
+        world = new WorldInstanceQueued();
         player1 = new Player("lol",
                 new Location(1, 1, 1, 1),
                 new PlayerStats(1, 1),
@@ -50,73 +50,89 @@ public class WorldPlayerTest {
     }
 
     @Test
-    public void movePlayerEast() {
+    public void movePlayerEast() throws InterruptedException {
         //движение на восток
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.EAST); //1,2,1,1
+        Assert.assertArrayEquals(new int[]{1, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.EAST); //1,3,1,1
         Assert.assertArrayEquals(new int[]{1, 3, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerWest() {
+    public void movePlayerWest() throws InterruptedException {
         //движение на запад
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.WEST); //1,0,1,1
+        Assert.assertArrayEquals(new int[]{1, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.WEST); //1,9,1,0
         Assert.assertArrayEquals(new int[]{1, 9, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerNorth() {
+    public void movePlayerNorth() throws InterruptedException {
         //движение на север
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.NORTH); //0,1,1,1
+        Assert.assertArrayEquals(new int[]{0, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.NORTH); //9,1,0,1
         Assert.assertArrayEquals(new int[]{9, 1, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerSouth() {
+    public void movePlayerSouth() throws InterruptedException {
         //движение на юг
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.SOUTH); //2,1,1,1
+        Assert.assertArrayEquals(new int[]{2, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.SOUTH); //3,1,1,1
         Assert.assertArrayEquals(new int[]{3, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerNorthEast() {
+    public void movePlayerNorthEast() throws InterruptedException {
         //движение на северо-восток
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.NORTHEAST); //0,2,1,1
+        Assert.assertArrayEquals(new int[]{0, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.NORTHEAST); //9,3,0,1
         Assert.assertArrayEquals(new int[]{9, 3, 0, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerNorthWest() {
+    public void movePlayerNorthWest() throws InterruptedException {
         //движение на северо-запад
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.NORTHWEST); //0,0,1,1
+        Assert.assertArrayEquals(new int[]{0, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.NORTHWEST); //9,9,0,0
         Assert.assertArrayEquals(new int[]{9, 9, 0, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerSouthWest() {
+    public void movePlayerSouthWest() throws InterruptedException {
         //движение на юго-запад
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.SOUTHWEST); //2,0,1,1
+        Assert.assertArrayEquals(new int[]{2, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.SOUTHWEST); //3,9,1,0
         Assert.assertArrayEquals(new int[]{3, 9, 1, 0}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }
 
     @Test
-    public void movePlayerSouthEast() {
+    public void movePlayerSouthEast() throws InterruptedException {
         //движение на юго-восток
         world.addPlayer(player1); //1,1,1,1
         world.movePlayer(player1, MoveDirections.SOUTHEAST); //2,2,1,1
+        Assert.assertArrayEquals(new int[]{2, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
+        Thread.sleep(7000);
         world.movePlayer(player1, MoveDirections.SOUTHEAST); //3,3,1,1
         Assert.assertArrayEquals(new int[]{3, 3, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
     }

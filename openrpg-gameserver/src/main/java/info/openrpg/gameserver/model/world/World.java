@@ -64,7 +64,7 @@ public class World implements IWorld {
 
                 LinkedHashSet<IEvent> AnotherPlayerEvents = eventHashSet.stream()
                         .filter(p ->
-                                p.getEventType() == EventType.ADDPLAYER || p.getEventType() == EventType.REMOVEPLAYER)
+                                p.getEventType() != EventType.ADDPLAYER || p.getEventType() != EventType.REMOVEPLAYER)
                         .collect(Collectors.toCollection(LinkedHashSet::new));
                 AnotherPlayerEvents.forEach(e -> taskPool.execute(() -> getPlayerById(e.getPlayerId()).move(e.getDirection())));
                 eventHashSet.removeAll(AnotherPlayerEvents);

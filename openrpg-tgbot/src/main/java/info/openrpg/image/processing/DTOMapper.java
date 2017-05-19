@@ -2,33 +2,59 @@ package info.openrpg.image.processing;
 
 import info.openrpg.gameserver.enums.Race;
 import info.openrpg.gameserver.enums.TerrainType;
+import info.openrpg.gameserver.model.actors.AbstractActor;
+import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.world.Chunk;
-import info.openrpg.image.processing.dto.CellDTO;
-import info.openrpg.image.processing.dto.ChunkDTO;
+import info.openrpg.image.processing.dto.CellDto;
+import info.openrpg.image.processing.dto.ChunkDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DTOMapper {
-    public static ChunkDTO ChunkDTO(Chunk chunk, int x, int y) {
-        ChunkDTO chunkDTO = new ChunkDTO();
+    public static ChunkDto ChunkDTO(Chunk chunk, int x, int y) {
+        ChunkDto chunkDto = new ChunkDto();
 
-        List<CellDTO> cells = new ArrayList<>();
+        List<CellDto> cells = new ArrayList<>();
 
         TerrainType[][] chunkmap = chunk.getChunkmap();
         for (int i = 0; i < chunkmap.length; i++) {
             for (int j = 0; j < chunkmap[i].length; j++) {
                 if (i == x && j == y)
-                    cells.add(new CellDTO(chunkmap[i][j], RaceMapper.mapRace(Race.HUMAN)));
+                    cells.add(new CellDto(chunkmap[i][j], RaceMapper.mapRace(Race.HUMAN)));
                 else
-                    cells.add(new CellDTO(chunkmap[i][j], null));
+                    cells.add(new CellDto(chunkmap[i][j], null));
             }
         }
 
-        chunkDTO.setCellDTOS(cells);
-        chunkDTO.setGrid(true);
-        chunkDTO.setCellsPerAxle(chunkmap.length);
+        chunkDto.setCellDtos(cells);
+        chunkDto.setGrid(true);
+        chunkDto.setCellsPerAxle(chunkmap.length);
 
-        return chunkDTO;
+        return chunkDto;
+    }
+
+    public static ChunkDto createChunkDtoByPlayers(Chunk chunk, List<Player> players) {
+        ChunkDto chunkDto = new ChunkDto();
+
+        List<CellDto> cells = new ArrayList<>();
+
+        TerrainType[][] chunkmap = chunk.getChunkmap();
+        for (int i = 0; i < chunkmap.length; i++) {
+            for (int j = 0; j < chunkmap[i].length; j++) {
+                cells.add(new CellDto(chunkmap[i][j], null));
+            }
+        }
+
+        players.stream()
+                .map(AbstractActor::getCurLocation)
+                .forEach(location -> cells
+                        .get(location.getX()*chunkmap.length + location.getY())
+                        .setPlayerType(RaceMapper.mapRace(Race.HUMAN)));
+        chunkDto.setCellDtos(cells);
+        chunkDto.setGrid(true);
+        chunkDto.setCellsPerAxle(chunkmap.length);
+
+        return chunkDto;
     }
 }

@@ -73,6 +73,10 @@ public class Location {
                 '}';
     }
 
+    public boolean isSameChunkLocation(Location that) {
+        return this.chunk_x == that.chunk_x && this.chunk_y == that.chunk_y;
+    }
+
     public int[] asArray() {
         return new int[]{this.x, this.y, this.chunk_x, this.chunk_y};
     }

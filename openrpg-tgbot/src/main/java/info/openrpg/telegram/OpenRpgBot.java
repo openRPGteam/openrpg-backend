@@ -160,6 +160,26 @@ public class OpenRpgBot extends TelegramLongPollingBot {
                 .ifPresent(this::sendText);
         Optional.ofNullable(messageWrapper.getPhoto())
                 .ifPresent(this::sendImage);
+        Optional.ofNullable(messageWrapper.getPhotoToMultipleUsers())
+                .ifPresent(this::sendPhotoToMultipleUsers);
+    }
+
+    private void sendPhotoToMultipleUsers(MessageWrapper.PhotoToMultipleUsers photoToMultipleUsers) {
+        try {
+            org.telegram.telegrambots.api.objects.Message message = sendPhoto(photoToMultipleUsers.getActualPhoto());
+            photoToMultipleUsers.getReceivers()
+                    .stream()
+                    .map(sendPhoto -> sendPhoto.setPhoto(message.getPhoto().get(0).getFileId()))
+                    .forEach(sendPhoto -> {
+                        try {
+                            sendPhoto(sendPhoto);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                    });
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleCrash(

@@ -2,6 +2,7 @@ package info.openrpg.telegram.io;
 
 import com.google.common.base.Joiner;
 import info.openrpg.database.models.Player;
+import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.constants.Direction;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -17,19 +18,19 @@ public class InlineButton {
     static {
         List<List<InlineKeyboardButton>> keys = new ArrayList<>();
         List<InlineKeyboardButton> topRow = new ArrayList<>();
-        topRow.add(createInlineKeyboardButton("🢄", getJoin(Direction.TOP_LEFT)));
-        topRow.add(createInlineKeyboardButton("🢁", getJoin(Direction.TOP)));
-        topRow.add(createInlineKeyboardButton("🢅", getJoin(Direction.TOP_RIGHT)));
+        topRow.add(createInlineKeyboardButton("🢄", getJoin(MoveDirections.NORTHWEST)));
+        topRow.add(createInlineKeyboardButton("🢁", getJoin(MoveDirections.NORTH)));
+        topRow.add(createInlineKeyboardButton("🢅", getJoin(MoveDirections.NORTHEAST)));
         keys.add(topRow);
         List<InlineKeyboardButton> middleRow = new ArrayList<>();
-        middleRow.add(createInlineKeyboardButton("🢀", getJoin(Direction.LEFT)));
+        middleRow.add(createInlineKeyboardButton("🢀", getJoin(MoveDirections.WEST)));
         middleRow.add(createInlineKeyboardButton("◉", "/"));
-        middleRow.add(createInlineKeyboardButton("🢂", getJoin(Direction.RIGHT)));
+        middleRow.add(createInlineKeyboardButton("🢂", getJoin(MoveDirections.EAST)));
         keys.add(middleRow);
         List<InlineKeyboardButton> bottomRow = new ArrayList<>();
-        bottomRow.add(createInlineKeyboardButton("🢇", getJoin(Direction.BOTTOM_LEFT)));
-        bottomRow.add(createInlineKeyboardButton("🢃", getJoin(Direction.BOTTOM)));
-        bottomRow.add(createInlineKeyboardButton("🢆", getJoin(Direction.BOTTOM_RIGHT)));
+        bottomRow.add(createInlineKeyboardButton("🢇", getJoin(MoveDirections.SOUTHWEST)));
+        bottomRow.add(createInlineKeyboardButton("🢃", getJoin(MoveDirections.SOUTH)));
+        bottomRow.add(createInlineKeyboardButton("🢆", getJoin(MoveDirections.SOUTHEAST)));
         keys.add(bottomRow);
         moveKeyboard = new InlineKeyboardMarkup().setKeyboard(keys);
     }
@@ -56,8 +57,8 @@ public class InlineButton {
         return moveKeyboard;
     }
 
-    private static String getJoin(Direction direction) {
-        return JOINER.join(Command.MOVE, direction.getX(), direction.getY());
+    private static String getJoin(MoveDirections direction) {
+        return JOINER.join(Command.MOVE, direction.name());
     }
 
     private static List<InlineKeyboardButton> createInlineKeyboardButtonRow(String text, String callback) {

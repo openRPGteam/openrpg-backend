@@ -192,7 +192,7 @@ public class World implements IWorld {
     }
 
     @Override
-    public Optional<Chunk> getChunkByUserId(int id) {
+    public Optional<Chunk> getChunkByPlayerId(int id) {
         return Optional.ofNullable(getAllPlayers().get(id))
                 .map(AbstractActor::getCurLocation)
                 .map(location -> Optional.of(worldChunks[location.getChunk_x()][location.getChunk_y()]))

@@ -16,7 +16,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <httpcompontents.version>4.5.2</httpcompontents.version>
+        <httpcompontents.version>4.5.3</httpcompontents.version>
         <telegrambots.version>2.4.4.5</telegrambots.version>
         <json.version>20160810</json.version>
         <log4j.version>1.2.17</log4j.version>
@@ -25,6 +25,13 @@
         <lombok.version>1.16.10</lombok.version>
         <mockito.version>1.9.5</mockito.version>
         <jackson.version>2.9.0.pr3</jackson.version>
+        <postgres.version>9.4.1212</postgres.version>
+        <hsql.version>2.4.0</hsql.version>
+        <hibernate.version>5.2.5.Final</hibernate.version>
+        <guice.version>4.1.0</guice.version>
+        <reflections.version>0.9.10</reflections.version>
+        <testng.version>6.11</testng.version>
+        <openrpg-server.version>1.0</openrpg-server.version>
     </properties>
 
     <dependencies>
@@ -32,19 +39,19 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4.1212</version>
+            <version>${postgres.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.2.5.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.1.0</version>
+            <version>${guice.version}</version>
         </dependency>
 
         <dependency>
@@ -57,7 +64,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>${httpcompontents.version}</version>
         </dependency>
 
         <!--Telegram-->
@@ -71,14 +78,14 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <version>${reflections.version}</version>
         </dependency>
 
         <!--Testing-->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.11</version>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -90,7 +97,7 @@
         <dependency>
             <groupId>info.openrpg</groupId>
             <artifactId>openrpg-gameserver</artifactId>
-            <version>1.0</version>
+            <version>${openrpg-server.version}</version>
         </dependency>
 
         <dependency>
@@ -109,12 +116,12 @@
                 <dependency>
                     <groupId>org.hsqldb</groupId>
                     <artifactId>hsqldb</artifactId>
-                    <version>2.4.0</version>
+                    <version>${hsql.version}</version>
                 </dependency>
                 <dependency> <!-- Отключаем постгрес, если включен HSQL. Должно работать? -->
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>9.4.1212</version>
+                    <version>${postgres.version}</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>

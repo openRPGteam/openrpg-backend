@@ -33,8 +33,8 @@ public class WorldInstance {
 
 
 
-    public void movePlayer(int playerId, MoveDirections moveDirections) {
-        world.getPlayerById(playerId).move(moveDirections);
+    public void movePlayer(Player player, MoveDirections moveDirections) {
+        world.getPlayerById(player.getPlayerId()).move(moveDirections);
     }
 
     public void movePlayerById(Integer player, MoveDirections moveDirections) {

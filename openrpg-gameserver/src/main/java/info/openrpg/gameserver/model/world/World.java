@@ -22,7 +22,7 @@ public class World implements IWorld {
     public final int MAP_SIZE_X = 10;
 
     //время глобального тика
-    public final int GLOBALTIME = 5;
+    public final int GLOBALTIME = 3;
 
     //хешмап для игроков
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
@@ -64,7 +64,7 @@ public class World implements IWorld {
 
                 LinkedHashSet<IEvent> AnotherPlayerEvents = eventHashSet.stream()
                         .filter(p ->
-                                p.getEventType() != EventType.ADDPLAYER || p.getEventType() != EventType.REMOVEPLAYER)
+                                ((p.getEventType() != EventType.ADDPLAYER) && (p.getEventType() != EventType.REMOVEPLAYER)))
                         .collect(Collectors.toCollection(LinkedHashSet::new));
                 AnotherPlayerEvents.forEach(e -> taskPool.execute(() -> getPlayerById(e.getPlayerId()).move(e.getDirection())));
                 eventHashSet.removeAll(AnotherPlayerEvents);
@@ -78,7 +78,7 @@ public class World implements IWorld {
 
             }
         };
-        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, GLOBALTIME, GLOBALTIME, TimeUnit.SECONDS);
+        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 0, GLOBALTIME, TimeUnit.SECONDS);
     }
 
     public void addEvent(PlayerEvent event) {

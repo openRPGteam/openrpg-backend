@@ -63,6 +63,8 @@ public class WorldPlayerTest {
     public void movePlayerEast() throws InterruptedException {
         //движение на восток
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.EAST); //1,2,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{1, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -76,6 +78,8 @@ public class WorldPlayerTest {
     public void movePlayerWest() throws InterruptedException {
         //движение на запад
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.WEST); //1,0,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{1, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -89,6 +93,8 @@ public class WorldPlayerTest {
     public void movePlayerNorth() throws InterruptedException {
         //движение на север
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.NORTH); //0,1,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{0, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -102,6 +108,8 @@ public class WorldPlayerTest {
     public void movePlayerSouth() throws InterruptedException {
         //движение на юг
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.SOUTH); //2,1,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{2, 1, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -115,6 +123,8 @@ public class WorldPlayerTest {
     public void movePlayerNorthEast() throws InterruptedException {
         //движение на северо-восток
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.NORTHEAST); //0,2,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{0, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -128,6 +138,8 @@ public class WorldPlayerTest {
     public void movePlayerNorthWest() throws InterruptedException {
         //движение на северо-запад
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.NORTHWEST); //0,0,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{0, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -141,6 +153,8 @@ public class WorldPlayerTest {
     public void movePlayerSouthWest() throws InterruptedException {
         //движение на юго-запад
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.SOUTHWEST); //2,0,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{2, 0, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -154,6 +168,8 @@ public class WorldPlayerTest {
     public void movePlayerSouthEast() throws InterruptedException {
         //движение на юго-восток
         world.addPlayer(player1); //1,1,1,1
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player1, MoveDirections.SOUTHEAST); //2,2,1,1
         Thread.sleep(queueDelay);
         Assert.assertArrayEquals(new int[]{2, 2, 1, 1}, world.getAllPlayers().get(player1.getPlayerId()).getCurLocation().asArray());
@@ -167,6 +183,8 @@ public class WorldPlayerTest {
     public void moveTryBellowZero() throws InterruptedException {
         //попытка выйти за пределы карты ниже нуля
         world.addPlayer(player2); //0,0,0,0
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player2, MoveDirections.NORTH);
         world.movePlayer(player2, MoveDirections.WEST);
         Thread.sleep(queueDelay);
@@ -178,10 +196,12 @@ public class WorldPlayerTest {
     public void moveTryAboveMax() throws InterruptedException {
         //попытка выйти за пределы карты выше лимита
         world.addPlayer(player3); //8,8,8,8
+        Thread.sleep(queueDelay);
+
         world.movePlayer(player3, MoveDirections.SOUTH);
         world.movePlayer(player3, MoveDirections.EAST);
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{chunkSize - 1, chunkSize - 1, chunkSize - 1, chunkSize - 1}, world.getAllPlayers().get(player3.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{chunkSize - 1, chunkSize - 1, mapSize - 1, mapSize - 1}, world.getAllPlayers().get(player3.getPlayerId()).getCurLocation().asArray());
     }
 
 }

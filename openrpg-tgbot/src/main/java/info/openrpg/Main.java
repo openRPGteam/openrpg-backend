@@ -21,7 +21,7 @@ public class Main {
         Properties properties = new Properties();
         InputStream input;
         try {
-            input = Main.class.getClassLoader().getResourceAsStream("application.properties");
+            input = Main.class.getClassLoader().getResourceAsStream(Profile.ACTIVE_DB_PROFILE.getPropertiesFileName());
             properties.load(input);
             Credentials botCredentials = new Credentials(
                     properties.getProperty("bot.name"),

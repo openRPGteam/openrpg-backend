@@ -1,5 +1,6 @@
 package info.openrpg.telegram.commands.actions;
 
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.io.MessageWrapper;
 import info.openrpg.telegram.io.InputMessage;
@@ -16,7 +17,7 @@ public class EchoCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> execute(InputMessage inputMessage) {
+    public List<MessageWrapper> execute(InputMessage inputMessage, WorldInstance worldInstance) {
         return Collections.singletonList(
                 new MessageWrapper(
                         new SendMessage()
@@ -25,7 +26,7 @@ public class EchoCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
+    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage, WorldInstance worldInstance) {
         return Collections.emptyList();
     }
 }

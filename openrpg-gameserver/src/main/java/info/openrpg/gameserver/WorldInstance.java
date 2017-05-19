@@ -9,6 +9,7 @@ import info.openrpg.gameserver.model.world.Chunk;
 import info.openrpg.gameserver.model.world.World;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class WorldInstance {
     private final World world;
@@ -18,8 +19,8 @@ public class WorldInstance {
         this.world = injector.getInstance(World.class);
     }
 
-    public void addPlayer(Player player) {
-        world.addPlayer(player);
+    public boolean addPlayer(Player player) {
+        return world.addPlayer(player);
     }
 
     public void removePlayer(Player player) {
@@ -32,8 +33,8 @@ public class WorldInstance {
 
 
 
-    public void movePlayer(Player player, MoveDirections moveDirections) {
-        world.getPlayerById(player.getPlayerId()).move(moveDirections);
+    public void movePlayer(int playerId, MoveDirections moveDirections) {
+        world.getPlayerById(playerId).move(moveDirections);
     }
 
     public void movePlayerById(Integer player, MoveDirections moveDirections) {
@@ -46,5 +47,9 @@ public class WorldInstance {
 
     public Map<Integer, Player> getAllPlayers() {
         return world.getAllPlayers();
+    }
+
+    public Optional<Chunk> getChunkByPlayerId(int id) {
+        return world.getChunkByUserId(id);
     }
 }

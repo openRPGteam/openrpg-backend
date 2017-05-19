@@ -2,6 +2,7 @@ package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.models.Player;
 import info.openrpg.database.repositories.PlayerDao;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InlineButton;
@@ -29,6 +30,7 @@ public class SpawnCommandTest {
     private static final InputStream STREAM = mock(InputStream.class);
 
     private SpawnCommand command;
+    private WorldInstance worldInstance;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -43,6 +45,8 @@ public class SpawnCommandTest {
                 .id(CHAT_ID.intValue())
                 .build();
         when(playerDao.findPlayerByUsername(USER_NAME)).thenReturn(Optional.of(player));
+
+        worldInstance = new WorldInstance();
         command = new SpawnCommand(playerDao, requestSender);
     }
 
@@ -52,7 +56,7 @@ public class SpawnCommandTest {
         when(user.getUserName()).thenReturn(USER_NAME);
         InputMessage inputMessage = new InputMessage(Command.START, CHAT_ID, user);
 
-        List<MessageWrapper> wrappers = command.execute(inputMessage);
+        List<MessageWrapper> wrappers = command.execute(inputMessage, worldInstance);
 
         Assert.assertFalse(wrappers.isEmpty());
         SendPhoto photo = wrappers.get(0).getPhoto();
@@ -65,13 +69,13 @@ public class SpawnCommandTest {
     @Test
     public void testHandleCrash() throws Exception {
         InputMessage message = new InputMessage("", 13L, new User());
-        Assert.assertEquals(command.handleCrash(new RuntimeException(), message), Collections.emptyList());
+        Assert.assertEquals(command.handleCrash(new RuntimeException(), message, worldInstance), Collections.emptyList());
     }
 
     @Test
     public void testWrongStateCrash() throws Exception {
         InputMessage message = new InputMessage("", CHAT_ID, new User());
-        List<MessageWrapper> messageWrappers = command.handleCrash(new IllegalStateException(), message);
+        List<MessageWrapper> messageWrappers = command.handleCrash(new IllegalStateException(), message, worldInstance);
         Assert.assertFalse(messageWrappers.isEmpty());
         Assert.assertTrue(messageWrappers.size() == 1);
         MessageWrapper messageWrapper = messageWrappers.get(0);

@@ -1,6 +1,7 @@
 package info.openrpg.telegram.commands.actions;
 
 import info.openrpg.database.repositories.PlayerDao;
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.io.InlineButton;
@@ -29,14 +30,16 @@ public class MoveCommand implements ExecutableCommand {
 
     /**
      * @param inputMessage user io
+     * @param worldInstance
      * @return list with singleton {@link MessageWrapper#MessageWrapper(SendPhoto)} or empty list
      * @throws InvalidStateException if backend server can't reach image server
      */
     @Override
-    public List<MessageWrapper> execute(InputMessage inputMessage) {
+    public List<MessageWrapper> execute(InputMessage inputMessage, WorldInstance worldInstance) {
         return Optional.of(inputMessage)
                 .filter(message -> message.hasArguments(2))
                 .map(message -> {
+//                    worldInstance.movePlayer(inputMessage.getChatId().intValue(), );
                     int x = Integer.parseInt(inputMessage.getArgument(1));
                     int y = Integer.parseInt(inputMessage.getArgument(2));
                     return playerDao.findPlayerByUsername(inputMessage.getFrom().getUserName())
@@ -67,7 +70,7 @@ public class MoveCommand implements ExecutableCommand {
     }
 
     @Override
-    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage) {
+    public List<MessageWrapper> handleCrash(RuntimeException e, InputMessage inputMessage, WorldInstance worldInstance) {
         return Collections.emptyList();
     }
 }

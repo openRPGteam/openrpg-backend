@@ -1,9 +1,16 @@
 package info.openrpg.image.processing;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import info.openrpg.image.processing.dto.ChunkDTO;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHttpRequest;
@@ -49,6 +56,32 @@ public class HTTPRequestSender implements RequestSender {
             return Optional.of(new URL(response).openConnection().getInputStream());
         } catch (IOException e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<InputStream> createImage(ChunkDTO chunkDTO) {
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+            HttpPost postRequest = new HttpPost(
+                    "http://localhost:8080/");
+            StringEntity input = new StringEntity(createJsonByChunk(chunkDTO));
+            input.setContentType("application/json");
+            postRequest.setEntity(input);
+            HttpResponse postResponse = client.execute(postRequest);
+
+            HttpEntity entity = postResponse.getEntity();
+            String response = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
+            return Optional.of(new URL(response).openConnection().getInputStream());
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    private String createJsonByChunk(ChunkDTO chunkDTO) {
+        try {
+            return new ObjectMapper().writeValueAsString(chunkDTO);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException();
         }
     }
 }

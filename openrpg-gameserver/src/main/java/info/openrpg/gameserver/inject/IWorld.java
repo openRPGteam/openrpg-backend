@@ -5,9 +5,10 @@ import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.world.Chunk;
 
 import java.util.Map;
+import java.util.Optional;
 
 public interface IWorld {
-    void addPlayer(Player player);
+    boolean addPlayer(Player player);
     void removePlayer(Player player);
 
     Player getPlayerById(int playerId);
@@ -33,4 +34,6 @@ public interface IWorld {
     Chunk[][] getWorldChunks();
 
     Chunk getChunkByXY(int chunk_x, int chunk_y);
+
+    Optional<Chunk> getChunkByUserId(int id);
 }

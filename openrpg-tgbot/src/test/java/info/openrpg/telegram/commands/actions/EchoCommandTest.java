@@ -1,5 +1,6 @@
 package info.openrpg.telegram.commands.actions;
 
+import info.openrpg.gameserver.WorldInstance;
 import info.openrpg.image.processing.RequestSender;
 import info.openrpg.telegram.constants.Command;
 import info.openrpg.telegram.io.InputMessage;
@@ -19,18 +20,20 @@ public class EchoCommandTest {
     public static final String RESPONSE_MESSAGE = "Hello world";
     public static final long CHAT_ID = 1L;
     private ExecutableCommand command;
+    private WorldInstance worldInstance;
 
     @BeforeClass
     public void setUp() {
         RequestSender requestSenderMock = mock(RequestSender.class);
         when(requestSenderMock.ping()).thenReturn(RESPONSE_MESSAGE);
         command = new EchoCommand(requestSenderMock);
+        worldInstance = new WorldInstance();
     }
 
     @Test
     public void testExecute() throws Exception {
         InputMessage inputMessage = new InputMessage(Command.ECHO, 1L, new User());
-        List<MessageWrapper> wrappers = command.execute(inputMessage);
+        List<MessageWrapper> wrappers = command.execute(inputMessage, worldInstance);
         Assert.assertFalse(wrappers.isEmpty());
         Assert.assertTrue(wrappers.size() == 1);
         Assert.assertNotNull(wrappers.get(0).getMessage());
@@ -41,7 +44,7 @@ public class EchoCommandTest {
     @Test
     public void testHandleCrash() throws Exception {
         InputMessage inputMessage = new InputMessage(Command.ECHO, 1L, new User());
-        Assert.assertEquals(Collections.emptyList(), command.handleCrash(new RuntimeException(), inputMessage));
+        Assert.assertEquals(Collections.emptyList(), command.handleCrash(new RuntimeException(), inputMessage, worldInstance));
     }
 
 }

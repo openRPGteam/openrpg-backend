@@ -1,20 +1,17 @@
 package info.openrpg.gameserver.model.world;
 
+import info.openrpg.gameserver.enums.EventType;
 import info.openrpg.gameserver.enums.TerrainType;
 import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.actors.AbstractActor;
 import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
-import info.openrpg.gameserver.model.events.IEvent;
 import info.openrpg.gameserver.model.events.PlayerEvent;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class World implements IWorld {
     public static final Logger LOG = Logger.getLogger(World.class.getSimpleName());
@@ -22,6 +19,9 @@ public class World implements IWorld {
     public final int CHUNK_SIZE = 9;
     // Размер карты 10х10 чанков
     public final int MAP_SIZE_X = 10;
+
+    //время глобального тика
+    public final int GLOBALTIME = 3;
 
     //хешмап для игроков
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
@@ -55,19 +55,15 @@ public class World implements IWorld {
                         System.out.println("EXCEPTION " + e.getMessage());
                     }
                 }
+                LinkedHashSet<PlayerEvent> addPlayerEvents = eventHashSet.stream()
+                        .filter(p -> p.getEventType() == EventType.ADDPLAYER)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                addPlayerEvents.forEach(e -> taskPool.execute(() -> addPlayer(e.getPlayer())));
 
-                for (IEvent event : eventHashSet) {
+                for (PlayerEvent event : eventHashSet) {
                     System.out.println(Thread.currentThread().getName() + " with " + event.getEventType() + " " + event.getDirection() + " tread start " + new Date());
                     try {
                         switch (event.getEventType()) {
-                             /*   case ADDPLAYER: {
-                                    addPlayer(event.getPlayer());
-                                    break;
-                                }
-                                case REMOVEPLAYER: {
-                                    removePlayerById(event.getPlayerId());
-                                    break;
-                                } */
                             case MOVEPLAYER: {
                                 //System.out.println(Thread.currentThread().getName() + " " + getPlayerById(event.getPlayerId()).getName() + " to " + event.getDirection());
                                 ///getPlayerById(event.getPlayerId()).move(event.getDirection());
@@ -83,9 +79,17 @@ public class World implements IWorld {
                     }
                     System.out.println(Thread.currentThread().getName() + " tread stop " + new Date());
                 }
+
+                LinkedHashSet<PlayerEvent> removePlayerEvents = eventHashSet.stream()
+                        .filter(p -> p.getEventType() == EventType.REMOVEPLAYER)
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+                removePlayerEvents.forEach(e -> taskPool.execute(() -> removePlayer(e.getPlayer())));
+
+
+
             }
         };
-        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 0, 5, TimeUnit.SECONDS);
+        globalLoop.scheduleWithFixedDelay(periodicQueueExecutor, 0, GLOBALTIME, TimeUnit.SECONDS);
     }
 
     public void addEvent(PlayerEvent event) {

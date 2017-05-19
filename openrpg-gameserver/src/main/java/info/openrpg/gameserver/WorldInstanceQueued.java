@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.inject.GeneralModule;
 import info.openrpg.gameserver.model.actors.Player;
+import info.openrpg.gameserver.model.events.AddPlayerEvent;
 import info.openrpg.gameserver.model.events.MovePlayerEvent;
 import info.openrpg.gameserver.model.events.RemovePlayerEvent;
 import info.openrpg.gameserver.model.world.Chunk;
@@ -21,9 +22,9 @@ public class WorldInstanceQueued {
     }
 
     public void addPlayer(Player player) {
-        //AddPlayerEvent event = new AddPlayerEvent(player);
-        //world.addEvent(event);
-        world.addPlayer(player);
+        AddPlayerEvent event = new AddPlayerEvent(player);
+        world.addEvent(event);
+
     }
 
     public void removePlayer(Player player) {
@@ -51,5 +52,9 @@ public class WorldInstanceQueued {
 
     public Map<Integer, Player> getAllPlayers() {
         return world.getAllPlayers();
+    }
+
+    public int getWorldDelay() {
+        return world.GLOBALTIME;
     }
 }

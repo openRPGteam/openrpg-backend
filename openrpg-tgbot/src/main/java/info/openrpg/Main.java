@@ -1,14 +1,12 @@
 package info.openrpg;
 
-import info.openrpg.telegram.OpenRpgBot;
+import info.openrpg.configuration.PropertiesConfiguration;
 import info.openrpg.telegram.Credentials;
+import info.openrpg.telegram.OpenRpgBot;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -18,27 +16,19 @@ public class Main {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-        Properties properties = new Properties();
-        InputStream input;
+        Properties botProperties = PropertiesConfiguration.getApplicationProperties();
         try {
-            input = Main.class.getClassLoader().getResourceAsStream(Profile.ACTIVE_DB_PROFILE.getPropertiesFileName());
-            properties.load(input);
             Credentials botCredentials = new Credentials(
-                    properties.getProperty("bot.name"),
-                    properties.getProperty("bot.token"),
-                    properties.getProperty("image-server.hostname"),
-                    Integer.parseInt(properties.getProperty("image-server.port"))
+                    botProperties.getProperty("bot.name"),
+                    botProperties.getProperty("bot.token"),
+                    botProperties.getProperty("image-server.hostname"),
+                    Integer.parseInt(botProperties.getProperty("image-server.port"))
             );
-            telegramBotsApi.registerBot(new OpenRpgBot(botCredentials, properties));
+            telegramBotsApi.registerBot(new OpenRpgBot(botCredentials));
         } catch (TelegramApiRequestException e) {
             logger.warning(e.getMessage());
-        } catch (FileNotFoundException e) {
-            logger.warning("No file with properties was found");
-        } catch (IOException e) {
-            logger.warning("Exception while loading properties");
         } catch (NumberFormatException e) {
             logger.warning("Invalid port parameter of image-server");
         }
-
     }
 }

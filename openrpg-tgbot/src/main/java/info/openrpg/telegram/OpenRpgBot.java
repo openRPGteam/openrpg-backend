@@ -1,5 +1,6 @@
 package info.openrpg.telegram;
 
+import info.openrpg.configuration.PropertiesConfiguration;
 import info.openrpg.database.models.Chat;
 import info.openrpg.database.models.Message;
 import info.openrpg.database.models.Player;
@@ -32,16 +33,21 @@ public class OpenRpgBot extends TelegramLongPollingBot {
     private EntityManager entityManager;
     private WorldInstance worldInstance;
 
-    public OpenRpgBot(Credentials credentials, Properties properties) {
+    public OpenRpgBot(Credentials credentials) {
         this.credentials = credentials;
-        this.sessionFactory = new Configuration()
-                .addProperties(properties)
+        this.sessionFactory = initializeSessionFactory();
+        this.entityManager = sessionFactory.createEntityManager();
+        this.worldInstance = new WorldInstance();
+    }
+
+    private static SessionFactory initializeSessionFactory(){
+        return new Configuration()
+                .addProperties(PropertiesConfiguration.getHibernateProperties())
+                .addProperties(PropertiesConfiguration.getDatabaseProperties())
                 .addAnnotatedClass(Message.class)
                 .addAnnotatedClass(Player.class)
                 .addAnnotatedClass(Chat.class)
                 .buildSessionFactory();
-        this.entityManager = sessionFactory.createEntityManager();
-        this.worldInstance = new WorldInstance();
     }
 
     @Override

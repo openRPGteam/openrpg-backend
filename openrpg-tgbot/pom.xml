@@ -28,12 +28,18 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1212</version>
+        </dependency>
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>5.2.5.Final</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -98,19 +104,6 @@
 
     <profiles>
         <profile>
-            <id>Postgres</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                    <version>9.4.1212</version>
-                </dependency>
-            </dependencies>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
             <id>Hsqldb</id>
             <dependencies>
                 <dependency>
@@ -118,7 +111,16 @@
                     <artifactId>hsqldb</artifactId>
                     <version>2.4.0</version>
                 </dependency>
+                <dependency> <!-- Отключаем постгрес, если включен HSQL. Должно работать? -->
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>9.4.1212</version>
+                    <scope>provided</scope>
+                </dependency>
             </dependencies>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
         </profile>
     </profiles>
 

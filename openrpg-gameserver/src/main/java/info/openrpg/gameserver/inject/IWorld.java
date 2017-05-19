@@ -35,5 +35,5 @@ public interface IWorld {
 
     Chunk getChunkByXY(int chunk_x, int chunk_y);
 
-    Optional<Chunk> getChunkByUserId(int id);
+    Optional<Chunk> getChunkByPlayerId(int id);
 }

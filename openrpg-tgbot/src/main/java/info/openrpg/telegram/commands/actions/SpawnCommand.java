@@ -10,7 +10,7 @@ import info.openrpg.gameserver.model.world.Chunk;
 import info.openrpg.gameserver.model.world.Location;
 import info.openrpg.image.processing.DTOMapper;
 import info.openrpg.image.processing.RequestSender;
-import info.openrpg.image.processing.dto.ChunkDTO;
+import info.openrpg.image.processing.dto.ChunkDto;
 import info.openrpg.telegram.commands.Message;
 import info.openrpg.telegram.io.InlineButton;
 import info.openrpg.telegram.io.InputMessage;
@@ -46,9 +46,9 @@ public class SpawnCommand implements ExecutableCommand {
         Chunk chunk = worldInstance.getChunkByPlayerId(inputMessage.getChatId().intValue())
                 .orElseThrow(() -> new IllegalStateException("can't reach image server"));
 
-        ChunkDTO chunkDTO = DTOMapper.ChunkDTO(chunk, 4, 4);
+        ChunkDto chunkDto = DTOMapper.ChunkDTO(chunk, 4, 4);
 
-        return requestSender.createImage(chunkDTO)
+        return requestSender.createImage(chunkDto)
                 .map(inputStream -> new SendPhoto().setNewPhoto("spawn", inputStream))
                 .map(sendPhoto -> sendPhoto.setChatId(inputMessage.getChatId()))
                 .map(sendPhoto -> sendPhoto.setReplyMarkup(InlineButton.moveButtonList()))

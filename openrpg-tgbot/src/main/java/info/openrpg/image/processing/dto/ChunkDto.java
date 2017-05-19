@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class ChunkDTO {
+public class ChunkDto {
     @JsonProperty(value = "cells_per_axle")
     private int cellsPerAxle;
 
@@ -12,7 +12,7 @@ public class ChunkDTO {
     private boolean grid;
 
     @JsonProperty(value = "array")
-    private List<CellDTO> cellDTOS;
+    private List<CellDto> cellDtos;
 
     public void setCellsPerAxle(int cellsPerAxle) {
         this.cellsPerAxle = cellsPerAxle;
@@ -22,8 +22,8 @@ public class ChunkDTO {
         this.grid = grid;
     }
 
-    public void setCellDTOS(List<CellDTO> cellDTOS) {
-        this.cellDTOS = cellDTOS;
+    public void setCellDtos(List<CellDto> cellDtos) {
+        this.cellDtos = cellDtos;
     }
 
     public int getCellsPerAxle() {
@@ -34,7 +34,7 @@ public class ChunkDTO {
         return grid;
     }
 
-    public List<CellDTO> getCellDTOS() {
-        return cellDTOS;
+    public List<CellDto> getCellDtos() {
+        return cellDtos;
     }
 }

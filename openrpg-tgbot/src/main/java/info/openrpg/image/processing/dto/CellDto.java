@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import info.openrpg.gameserver.enums.TerrainType;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CellDTO {
+public class CellDto {
     @JsonProperty(value = "terrain_type")
     private TerrainType terrainType;
     @JsonProperty(value = "player")
     private String playerType;
 
-    public CellDTO(TerrainType terrainType, String playerType) {
+    public CellDto(TerrainType terrainType, String playerType) {
         this.terrainType = terrainType;
         this.playerType = playerType;
     }

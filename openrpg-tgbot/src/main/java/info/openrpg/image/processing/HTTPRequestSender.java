@@ -2,14 +2,13 @@ package info.openrpg.image.processing;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import info.openrpg.image.processing.dto.ChunkDTO;
+import info.openrpg.image.processing.dto.ChunkDto;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -60,11 +59,11 @@ public class HTTPRequestSender implements RequestSender {
     }
 
     @Override
-    public Optional<InputStream> createImage(ChunkDTO chunkDTO) {
+    public Optional<InputStream> createImage(ChunkDto chunkDto) {
         try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
             HttpPost postRequest = new HttpPost(
                     "http://localhost:8080/");
-            StringEntity input = new StringEntity(createJsonByChunk(chunkDTO));
+            StringEntity input = new StringEntity(createJsonByChunk(chunkDto));
             input.setContentType("application/json");
             postRequest.setEntity(input);
             HttpResponse postResponse = client.execute(postRequest);
@@ -77,9 +76,9 @@ public class HTTPRequestSender implements RequestSender {
         }
     }
 
-    private String createJsonByChunk(ChunkDTO chunkDTO) {
+    private String createJsonByChunk(ChunkDto chunkDto) {
         try {
-            return new ObjectMapper().writeValueAsString(chunkDTO);
+            return new ObjectMapper().writeValueAsString(chunkDto);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException();
         }

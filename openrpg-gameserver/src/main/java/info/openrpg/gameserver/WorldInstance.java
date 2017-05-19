@@ -6,10 +6,13 @@ import info.openrpg.gameserver.enums.MoveDirections;
 import info.openrpg.gameserver.inject.GeneralModule;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.world.Chunk;
+import info.openrpg.gameserver.model.world.Location;
 import info.openrpg.gameserver.model.world.World;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class WorldInstance {
     private final World world;
@@ -50,6 +53,17 @@ public class WorldInstance {
     }
 
     public Optional<Chunk> getChunkByPlayerId(int id) {
-        return world.getChunkByUserId(id);
+        return world.getChunkByPlayerId(id);
+    }
+
+    public List<Player> getPlayersInSameChunkByPlayerId(int id) {
+        Location curLocation = world.getPlayerById(id)
+                .getCurLocation();
+
+        return world.getAllPlayers()
+                .values()
+                .stream()
+                .filter(player -> player.getCurLocation().isSameChunkLocation(curLocation))
+                .collect(Collectors.toList());
     }
 }

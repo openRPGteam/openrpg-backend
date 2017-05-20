@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -23,11 +24,15 @@ public class PropertiesConfiguration {
     private static Properties database;
     private static Properties hibernate;
 
-    static {
+    public static void initializeDefaults() {
+        logger.info("Initializing defaults");
         try {
-            application = initFromResources(DEFAULT_APPLICATION_PROPERTIES_NAME);
-            database = initFromResources(MavenProfile.ACTIVE_DB_PROFILE.getPropertiesFileName().orElse(DEFAULT_DATABASE_PROPERTIES_NAME));
-            hibernate = initFromResources(DEFAULT_HIBERNATE_PROPERTIES_NAME);
+            if (application == null)
+                application = initFromResources(DEFAULT_APPLICATION_PROPERTIES_NAME);
+            if (database == null)
+                database = initFromResources(MavenProfile.ACTIVE_DB_PROFILE.getPropertiesFileName().orElse(DEFAULT_DATABASE_PROPERTIES_NAME));
+            if (hibernate == null)
+                hibernate = initFromResources(DEFAULT_HIBERNATE_PROPERTIES_NAME);
         } catch (FileNotFoundException e) {
             logger.warning("Default properties file not found");
         } catch (IOException e) {
@@ -37,29 +42,61 @@ public class PropertiesConfiguration {
 
     public static Properties initFromResources(String propertiesName) throws IOException {
         Properties properties = new Properties();
-        properties.load(PropertiesConfiguration.class.getResourceAsStream(propertiesName));
+        properties.load(PropertiesConfiguration.class.getClassLoader().getResourceAsStream(propertiesName));
         return properties;
     }
 
     /*
-     * Все что ниже - задел на будущее. Если приспичит, можно пропарсить args и загрузить кастомные пропертис.
+     * Dproperties, Ddatabase и Dhibernate - опционально. Если их нет, делается дефолт.
+     * Чтобы сделать все три обязательно, уберите проверку на null и раскомментить чек на нулл.
+     * Чтобы совсем убрать дефолтные настройки, удалите метод initializeDefaults и стринг константы с именами файлов.
      */
     public static void setApplicationProperties(File file) throws IOException {
-        application = initFromFile(file);
+//        requirePropertiesFileNotNull(file, "applicatoin");
+        if (file != null)
+            application = initFromFile(file);
     }
 
     public static void setDatabaseProperties(File file) throws IOException {
-        database = initFromFile(file);
+//        requirePropertiesFileNotNull(file, "database");
+        if (file != null)
+            database = initFromFile(file);
     }
 
     public static void setHibernateProperties(File file) throws IOException {
-        hibernate = initFromFile(file);
+//        requirePropertiesFileNotNull(file, "hibernate");
+        if (file != null)
+            hibernate = initFromFile(file);
     }
 
     public static Properties initFromFile(File file) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(file));
         return properties;
+    }
+
+    public static void initFromArgs(Map<String, String> args) throws IOException {
+        if (args != null) {
+            setApplicationProperties(getExistingFileFromPath(args.get("-Dproperties")));
+            setDatabaseProperties(getExistingFileFromPath(args.get("-Ddatabase")));
+            setHibernateProperties(getExistingFileFromPath(args.get("-Dhibernate")));
+        }
+        initializeDefaults();
+    }
+
+    public static File getExistingFileFromPath(String path) {
+        if (path != null && path.endsWith(".properties")) {
+            File file = new File(path);
+            if (file.exists())
+                return file;
+        }
+        return null;
+    }
+
+    public static void requirePropertiesFileNotNull(File file, String properties) {
+        if (file == null)
+            throw new IllegalStateException(
+                    "Provided " + properties + " properties file doesn't exist or doesn't end with .properties");
     }
 
     public static Properties getApplicationProperties() {

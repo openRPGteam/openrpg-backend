@@ -37,7 +37,7 @@ public class PropertiesConfiguration {
 
     public static Properties initFromResources(String propertiesName) throws IOException {
         Properties properties = new Properties();
-        properties.load(PropertiesConfiguration.class.getResourceAsStream(propertiesName));
+        properties.load(PropertiesConfiguration.class.getClassLoader().getResourceAsStream(propertiesName));
         return properties;
     }
 

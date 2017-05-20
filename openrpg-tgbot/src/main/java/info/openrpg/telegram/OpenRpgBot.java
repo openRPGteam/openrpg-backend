@@ -94,6 +94,7 @@ public class OpenRpgBot extends TelegramLongPollingBot {
 
         return messageQueue
                 .map(message -> {
+                    entityManager.getTransaction().begin();
                     entityManager.remove(message);
                     entityManager.getTransaction().commit();
                     entityManager.close();

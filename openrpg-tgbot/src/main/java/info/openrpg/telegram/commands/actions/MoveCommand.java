@@ -71,12 +71,14 @@ public class MoveCommand implements ExecutableCommand {
         InputStream image = requestSender.createImage(chunkDto).orElseThrow(() -> new IllegalStateException("Can't reach image-server"));
         SendPhoto actualPhoto = new SendPhoto().setNewPhoto("image", image).setReplyMarkup(InlineButton.moveButtonList())
                 .setChatId(inputMessage.getChatId());
-        List<SendPhoto> receivers = players.stream()
-                .filter(player -> player.getPlayerId() != inputMessage.getChatId().intValue())
-                .map(player -> new SendPhoto().setChatId(player.getPlayerId().longValue()))
-                .map(sendPhoto -> sendPhoto.setReplyMarkup(InlineButton.moveButtonList()))
-                .collect(Collectors.toList());
-        return Collections.singletonList(new MessageWrapper(new MessageWrapper.PhotoToMultipleUsers(actualPhoto, receivers)));
+        // TODO: вынести в отдельную команду
+//        List<SendPhoto> receivers = players.stream()
+//                .filter(player -> player.getPlayerId() != inputMessage.getChatId().intValue())
+//                .map(player -> new SendPhoto().setChatId(player.getPlayerId().longValue()))
+//                .map(sendPhoto -> sendPhoto.setReplyMarkup(InlineButton.moveButtonList()))
+//                .map(SendPhoto::disableNotification)
+//                .collect(Collectors.toList());
+        return Collections.singletonList(new MessageWrapper(new MessageWrapper.PhotoToMultipleUsers(actualPhoto, Collections.emptyList())));
     }
 
     @Override

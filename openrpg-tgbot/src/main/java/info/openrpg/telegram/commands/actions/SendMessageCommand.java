@@ -41,7 +41,7 @@ public class SendMessageCommand implements ExecutableCommand {
                 .map(iM -> iM.getArgument(1))
                 .map(username -> playerDao.findPlayerByUsername(username)
                         .map(player -> new SendMessage()
-                                .setChatId(new Long(player.getId()))
+                                .setChatId(player.getId().longValue())
                                 .setText(JOINER.join(
                                         PLAYER_PEEKED_MESSAGE,
                                         "@".concat(inputMessage.getFrom().getUserName()).concat(":"),

@@ -97,7 +97,6 @@ public class OpenRpgBot extends TelegramLongPollingBot {
                     entityManager.getTransaction().begin();
                     entityManager.remove(message);
                     entityManager.getTransaction().commit();
-                    entityManager.close();
                     return message;
                 }).map(message -> new InputMessage(inputMessage, message.getMessage()))
                 .orElse(inputMessage);

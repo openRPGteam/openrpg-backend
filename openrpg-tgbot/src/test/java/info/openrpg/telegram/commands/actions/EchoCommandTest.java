@@ -17,8 +17,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EchoCommandTest {
-    public static final String RESPONSE_MESSAGE = "Hello world";
-    public static final long CHAT_ID = 1L;
+    private static final String RESPONSE_MESSAGE = "Hello world";
+    private static final long CHAT_ID = 1L;
     private ExecutableCommand command;
     private WorldInstance worldInstance;
 

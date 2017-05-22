@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class WorldPlayerTest {
-    public static final int delay = 1;
+    public static final int DELAY = 1;
     private WorldInstanceQueued world;
     private Player player1;
     private Player player2;
@@ -22,7 +22,7 @@ public class WorldPlayerTest {
     @Before
     public void init() {
         world = new WorldInstanceQueued();
-        this.queueDelay = (world.getWorldDelay() + delay) * 1000;
+        this.queueDelay = (world.getWorldDelay() + DELAY) * 1000;
         this.chunkSize = world.getChunkSize();
         this.mapSize = world.getMapSize();
         player1 = new Player("lol",

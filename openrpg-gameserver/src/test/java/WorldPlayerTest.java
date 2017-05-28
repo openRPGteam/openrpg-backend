@@ -21,7 +21,7 @@ public class WorldPlayerTest {
     private int mapSizeY;
 
     @Before
-    public void init() {
+    public void init() {   	 
         world = new WorldInstanceQueued();
         this.queueDelay = (world.getWorldDelay() + DELAY) * 1000;
         this.chunkSize = world.getChunkSize();
@@ -56,9 +56,17 @@ public class WorldPlayerTest {
         world.removePlayer(player3);
         Thread.sleep(queueDelay);
         Assert.assertEquals(2, world.getPlayersCount());
+        Assert.assertEquals(0, world.getPlayers(mapSizeX - 1, mapSizeY - 1)
+                .stream().map(x -> x.getPlayerId()).toArray(Integer[]::new).length);
         world.addPlayer(player3);
         Thread.sleep(queueDelay);
         Assert.assertEquals(3, world.getPlayersCount());
+        Assert.assertArrayEquals(new Integer[]{1}, world.getPlayers(1, 1)
+                .stream().map(x -> x.getPlayerId()).toArray(Integer[]::new));
+        Assert.assertArrayEquals(new Integer[]{2}, world.getPlayers(0, 0)
+                .stream().map(x -> x.getPlayerId()).toArray(Integer[]::new));
+        Assert.assertArrayEquals(new Integer[]{3}, world.getPlayers(mapSizeX - 1, mapSizeY - 1)
+                .stream().map(x -> x.getPlayerId()).toArray(Integer[]::new));
     }
 
     @Test

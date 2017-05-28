@@ -1,7 +1,6 @@
 package info.openrpg.gameserver.model.world;
 
 import info.openrpg.gameserver.enums.EventType;
-import info.openrpg.gameserver.enums.TerrainType;
 import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.actors.AbstractActor;
 import info.openrpg.gameserver.model.actors.GameObject;
@@ -92,28 +91,6 @@ public class World implements IWorld {
         }
     }
 
-    //TODO из базы подгружать
-    public Chunk[][] initchunks() {
-        Chunk[][] random = new Chunk[MAP_SIZE_X][MAP_SIZE_Y];
-        for (int i = 0; i < MAP_SIZE_X; i++) {
-            for (int j = 0; j < MAP_SIZE_Y; j++) {
-                random[i][j] = this.randomchunk(TerrainType.GRASS);
-            }
-        }
-        return random;
-    }
-
-    public Chunk randomchunk(TerrainType type) {
-        TerrainType[][] random = new TerrainType[CHUNK_SIZE][CHUNK_SIZE];
-        for (int i = 0; i < CHUNK_SIZE; i++) {
-            for (int j = 0; j < CHUNK_SIZE; j++) {
-                random[i][j] = type;
-            }
-        }
-        return new Chunk(random);
-    }
-
-
     @Override
     public boolean addPlayer(Player player) {
         player.bindWorld(this);
@@ -129,12 +106,8 @@ public class World implements IWorld {
     @Override
     public void removePlayer(Player player) {
         players.remove(player.getPlayerId(), player);
+        removePlayerFromXYChunk(player.getPlayerId(), player.getCurLocation().getChunk_x(), player.getCurLocation().getChunk_y());
         LOG.info("Player " + player.getName() + " removed from playersmap");
-    }
-
-    public void removePlayerById(int playerId) {
-        players.remove(playerId);
-        LOG.info("Player with id" + playerId + " removed from playersmap");
     }
 
     @Override
@@ -213,5 +186,24 @@ public class World implements IWorld {
 
     public int getLoopDelay() {
         return GLOBALTIME;
+    }
+
+    public void putPlayerToXYChunk(int playerId, int x, int y) {
+        if (x < getMapSizeX() && y < getMapSizeY()) {
+            worldChunks[x][y].addPlayerInChunk(playerId);
+        }
+    }
+
+    public void removePlayerFromXYChunk(int playerId, int x, int y) {
+        if (x < getMapSizeX() && y < getMapSizeY()) {
+            worldChunks[x][y].deletePlayerInChunk(playerId);
+        }
+    }
+
+    @Override
+    public List<Player> getPlayersByChunkXY(int chunk_x, int chunk_y) {
+        List<Player> result = (getWorldChunks()[chunk_x][chunk_y].getPlayersIdInChunks()).stream()
+                .map(this::getPlayerById).collect(Collectors.toList());
+        return result;
     }
 }

@@ -11,6 +11,7 @@ import info.openrpg.gameserver.model.events.RemovePlayerEvent;
 import info.openrpg.gameserver.model.world.Chunk;
 import info.openrpg.gameserver.model.world.World;
 
+import java.util.List;
 import java.util.Map;
 
 public class WorldInstanceQueued {
@@ -48,6 +49,10 @@ public class WorldInstanceQueued {
 
     public Chunk getMap(int chunk_x, int chunk_y) {
         return world.getChunkByXY(chunk_x, chunk_y);
+    }
+
+    public List<Player> getPlayers(int chunk_x, int chunk_y) {
+        return world.getPlayersByChunkXY(chunk_x, chunk_y);
     }
 
     public Map<Integer, Player> getAllPlayers() {

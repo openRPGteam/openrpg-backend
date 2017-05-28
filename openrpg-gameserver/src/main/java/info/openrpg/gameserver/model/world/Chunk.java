@@ -2,8 +2,13 @@ package info.openrpg.gameserver.model.world;
 
 import info.openrpg.gameserver.enums.TerrainType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Chunk {
     private final TerrainType[][] chunkmap;
+    private List<Integer> playersIdInChunks = new ArrayList<>();
+    private List<Integer> objectsIdInChunks = new ArrayList<>();
 
     public Chunk() {
         this.chunkmap = null;
@@ -11,6 +16,38 @@ public class Chunk {
 
     public Chunk(TerrainType[][] chunkmap) {
         this.chunkmap = chunkmap;
+    }
+
+    public List<Integer> getPlayersIdInChunks() {
+        return playersIdInChunks;
+    }
+
+    public void addPlayerInChunk(Integer playerId) {
+        if (!playersIdInChunks.contains(playerId)) {
+            playersIdInChunks.add(playerId);
+        }
+    }
+
+    public void deletePlayerInChunk(Integer playerId) {
+        if (playersIdInChunks.contains(playerId)) {
+            playersIdInChunks.remove(playerId);
+        }
+    }
+
+    public List<Integer> getObjectsIdInChunks() {
+        return objectsIdInChunks;
+    }
+
+    public void addObjectInChunk(Integer objectId) {
+        if (!objectsIdInChunks.contains(objectId)) {
+            objectsIdInChunks.add(objectId);
+        }
+    }
+
+    public void deleteObjectInChunk(Integer objectId) {
+        if (objectsIdInChunks.contains(objectId)) {
+            objectsIdInChunks.remove(objectId);
+        }
     }
 
     public TerrainType getTerrainFromChunkByXY(int x, int y) {

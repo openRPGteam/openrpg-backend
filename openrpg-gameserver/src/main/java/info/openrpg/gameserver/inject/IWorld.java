@@ -4,11 +4,13 @@ import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.world.Chunk;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface IWorld {
     boolean addPlayer(Player player);
+
     void removePlayer(Player player);
 
     Player getPlayerById(int playerId);
@@ -39,5 +41,11 @@ public interface IWorld {
 
     Chunk getChunkByXY(int chunk_x, int chunk_y);
 
+    List<Player> getPlayersByChunkXY(int chunk_x, int chunk_y);
+
     Optional<Chunk> getChunkByPlayerId(int id);
+
+    void putPlayerToXYChunk(int playerId, int x, int y);
+
+    void removePlayerFromXYChunk(int playerId, int x, int y);
 }

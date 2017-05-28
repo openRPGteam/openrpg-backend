@@ -6,20 +6,29 @@ import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.behavior.PlayerCollision;
 import info.openrpg.gameserver.model.world.Location;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 
-public abstract class AbstractActor implements MoveableActor {
+public abstract class AbstractActor implements MoveableActor, Serializable {
     public static final Logger LOG = Logger.getLogger(AbstractActor.class.getName());
+    private static final long serialVersionUID = 4526282569827006593L;
+    private final Integer actorId;
     protected IWorld currentWorld;
     private Location curLocation;
 
-    public AbstractActor(Location curLocation) {
+    public AbstractActor(Location curLocation, Integer actorId) {
         this.curLocation = curLocation;
+        this.actorId = actorId;
+    }
+
+    public Integer getActorId() {
+        return actorId;
     }
 
     @Inject
     public void bindWorld(IWorld currentWorld) {
         this.currentWorld = currentWorld;
+        currentWorld.putPlayerToXYChunk(actorId, this.curLocation.getChunk_x(), this.curLocation.getChunk_y());
     }
 
     public Location getCurLocation() {
@@ -28,6 +37,7 @@ public abstract class AbstractActor implements MoveableActor {
 
     public void setCurLocation(Location curLocation) {
         this.curLocation = curLocation;
+        currentWorld.putPlayerToXYChunk(actorId, this.curLocation.getChunk_x(), this.curLocation.getChunk_y());
     }
 
     @Override

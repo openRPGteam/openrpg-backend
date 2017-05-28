@@ -5,5 +5,9 @@ import info.openrpg.gameserver.model.world.Chunk;
 public interface IGeodata {
     Chunk[][] loadFullMap();
 
-    int getWorldSize();
+    int getWorldXSize();
+
+    int getWorldYSize();
+
+    Chunk getChunk(int x, int y);
 }

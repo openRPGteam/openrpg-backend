@@ -6,13 +6,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GeodataFSLoader implements IGeodata {
     public static final String GEODATAFILE = "src/main/resources/geodata/sample.bin";
-    private final byte[] geodata;
+    public final int CHUNK_SIZE = 9;
+    private final List<byte[]> geodata;
 
-    public GeodataFSLoader() {
-        this.geodata = readGeaFromFile(GEODATAFILE);
+    public GeodataFSLoader() throws IOException {
+        this.geodata = readGeoFromFile(GEODATAFILE);
     }
 
     @Override
@@ -22,19 +25,19 @@ public class GeodataFSLoader implements IGeodata {
     }
 
     @Override
-    public int getWorldSize() {
+    public int getWorldXSize() {
 
-        return geodata.length;
+        return geodata.size() / CHUNK_SIZE;
     }
 
-    private byte[] readGeaFromFile(String geoFileName) {
+    @Override
+    public int getWorldYSize() {
+        return geodata.get(0).length / CHUNK_SIZE;
+    }
+
+    private List<byte[]> readGeoFromFile(String geoFileName) throws IOException {
         Path path = Paths.get(geoFileName);
-        byte[] result = null;
-        try {
-            result = Files.readAllBytes(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
+        List<byte[]> geoList = Files.lines(path).map((x) -> x.getBytes()).collect(Collectors.toList());
+        return geoList;
     }
 }

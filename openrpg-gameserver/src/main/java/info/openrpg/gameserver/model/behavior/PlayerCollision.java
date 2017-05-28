@@ -1,6 +1,5 @@
 package info.openrpg.gameserver.model.behavior;
 
-import com.google.inject.Inject;
 import info.openrpg.gameserver.inject.IWorld;
 import info.openrpg.gameserver.model.world.Location;
 
@@ -15,7 +14,7 @@ public class PlayerCollision extends AbstractCollision {
         return (location.getChunk_x() >= 0 &&
                 location.getChunk_y() >= 0 &&
                 location.getChunk_x() < currentWorld.getMapSizeX() &&
-                location.getChunk_y() < currentWorld.getMapSizeX() &&
+                location.getChunk_y() < currentWorld.getMapSizeY() &&
                 currentWorld.getWorldChunks()[location.getChunk_x()][location.getChunk_y()]
                         .getChunkmap()[location.getX()][location.getY()].isPassable());
     }

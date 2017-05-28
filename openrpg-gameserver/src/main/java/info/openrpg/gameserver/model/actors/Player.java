@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class Player extends AbstractActor implements Serializable {
     public static final Logger LOG = Logger.getLogger(Player.class.getName());
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4526282569827006593L;
     private final GameClass gameClass;
     private final Race playerRace;
     private final String name;

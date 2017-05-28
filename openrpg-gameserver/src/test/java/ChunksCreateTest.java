@@ -5,11 +5,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class ChunksCreateTest {
     private World testWorld;
 
     @Before
-    public void init() {
+    public void init() throws IOException {
         this.testWorld = new World();
     }
 
@@ -20,7 +22,7 @@ public class ChunksCreateTest {
 
     @Test
     public void testRandomChunk() {
-        Chunk newchunk = testWorld.randomchunk(TerrainType.EARTH);
+        Chunk newchunk = testWorld.randomchunk(TerrainType.GRASS);
         Assert.assertNotNull("Пустой элемент в начале первой строки", newchunk.getChunkmap()[0][0]);
         Assert.assertNotNull("Пустой элемент в конце первой строки", newchunk.getChunkmap()[0][testWorld.CHUNK_SIZE - 1]);
         Assert.assertNotNull("Пустой элемент в начале последней строки", newchunk.getChunkmap()[testWorld.CHUNK_SIZE - 1][0]);

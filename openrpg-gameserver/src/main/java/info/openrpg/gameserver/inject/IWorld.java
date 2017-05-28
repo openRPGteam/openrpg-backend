@@ -31,6 +31,10 @@ public interface IWorld {
 
     int getMapSizeX();
 
+    int getMapSizeY();
+
+    int getLoopDelay();
+
     Chunk[][] getWorldChunks();
 
     Chunk getChunkByXY(int chunk_x, int chunk_y);

@@ -55,14 +55,17 @@ public class WorldInstanceQueued {
     }
 
     public int getWorldDelay() {
-        return world.GLOBALTIME;
+        return world.getLoopDelay();
     }
-
     public int getChunkSize() {
-        return world.CHUNK_SIZE;
+        return world.getChunkSize();
     }
 
-    public int getMapSize() {
-        return world.MAP_SIZE_X;
+    public int getMapSizeX() {
+        return world.getMapSizeX();
+    }
+
+    public int getMapSizeY() {
+        return world.getMapSizeY();
     }
 }

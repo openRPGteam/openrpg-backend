@@ -1,5 +1,6 @@
 package info.openrpg.gameserver.utils;
 
+import info.openrpg.gameserver.enums.TerrainType;
 import info.openrpg.gameserver.model.world.Chunk;
 
 import java.io.IOException;
@@ -18,21 +19,54 @@ public class GeodataFSLoader implements IGeodata {
         this.geodata = readGeoFromFile(GEODATAFILE);
     }
 
+    public GeodataFSLoader(String geoFile) throws IOException {
+        this.geodata = readGeoFromFile(geoFile);
+    }
+
     @Override
     public Chunk[][] loadFullMap() {
-
-        return new Chunk[0][];
+        Chunk[][] result = new Chunk[getWorldXSize()][getWorldYSize()];
+        for (int i = 0; i < getWorldXSize(); i++) {
+            for (int j = 0; j < getWorldYSize(); j++) {
+                result[i][j] = getChunk(i, j);
+            }
+        }
+        return result;
     }
 
     @Override
     public int getWorldXSize() {
-
         return geodata.size() / CHUNK_SIZE;
     }
 
     @Override
     public int getWorldYSize() {
         return geodata.get(0).length / CHUNK_SIZE;
+    }
+
+    @Override
+    public int getWorldXSizeCells() {
+        return geodata.size();
+    }
+
+    @Override
+    public int getWorldYSizeCells() {
+        return geodata.get(0).length;
+    }
+
+    @Override
+    public Chunk getChunk(int x, int y) {
+        if (x > getWorldXSize() || y > getWorldYSize())
+            return new Chunk();
+        TerrainType[][] result = new TerrainType[CHUNK_SIZE][CHUNK_SIZE];
+        for (int i = 0; i < CHUNK_SIZE; i++) {
+            for (int j = 0; j < CHUNK_SIZE; j++) {
+                TerrainType cell = TerrainType.valueOf(geodata.get(x * CHUNK_SIZE + i)[y * CHUNK_SIZE + j] - 48);
+                // System.out.println(cell);
+                result[i][j] = cell;
+            }
+        }
+        return new Chunk(result);
     }
 
     private List<byte[]> readGeoFromFile(String geoFileName) throws IOException {

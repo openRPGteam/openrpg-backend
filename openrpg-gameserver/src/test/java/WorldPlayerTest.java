@@ -17,14 +17,16 @@ public class WorldPlayerTest {
     private Player player3;
     private int queueDelay;
     private int chunkSize;
-    private int mapSize;
+    private int mapSizeX;
+    private int mapSizeY;
 
     @Before
     public void init() {
         world = new WorldInstanceQueued();
         this.queueDelay = (world.getWorldDelay() + DELAY) * 1000;
         this.chunkSize = world.getChunkSize();
-        this.mapSize = world.getMapSize();
+        this.mapSizeX = world.getMapSizeX();
+        this.mapSizeY = world.getMapSizeY();
         player1 = new Player("lol",
                 new Location(1, 1, 1, 1),
                 new PlayerStats(1, 1),
@@ -34,7 +36,7 @@ public class WorldPlayerTest {
                 new PlayerStats(1, 1),
                 GameClass.ARCHER, Race.HUMAN, 2);
         player3 = new Player("cheburek",
-                new Location(chunkSize - 1, chunkSize - 1, mapSize - 1, mapSize - 1),
+                new Location(chunkSize - 1, chunkSize - 1, mapSizeX - 1, mapSizeY - 1),
                 new PlayerStats(1, 1),
                 GameClass.KNIGHT, Race.HUMAN, 3);
     }
@@ -201,7 +203,7 @@ public class WorldPlayerTest {
         world.movePlayer(player3, MoveDirections.SOUTH);
         world.movePlayer(player3, MoveDirections.EAST);
         Thread.sleep(queueDelay);
-        Assert.assertArrayEquals(new int[]{chunkSize - 1, chunkSize - 1, mapSize - 1, mapSize - 1}, world.getAllPlayers().get(player3.getPlayerId()).getCurLocation().asArray());
+        Assert.assertArrayEquals(new int[]{chunkSize - 1, chunkSize - 1, mapSizeX - 1, mapSizeY - 1}, world.getAllPlayers().get(player3.getPlayerId()).getCurLocation().asArray());
     }
 
 }

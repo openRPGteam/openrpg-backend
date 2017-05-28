@@ -8,7 +8,9 @@ import info.openrpg.gameserver.model.actors.GameObject;
 import info.openrpg.gameserver.model.actors.Player;
 import info.openrpg.gameserver.model.events.IEvent;
 import info.openrpg.gameserver.model.events.PlayerEvent;
+import info.openrpg.gameserver.utils.GeodataFSLoader;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
@@ -18,25 +20,23 @@ public class World implements IWorld {
     public static final Logger LOG = Logger.getLogger(World.class.getSimpleName());
     // Размер чанка 9x9
     public final int CHUNK_SIZE = 9;
-    // Размер карты 10х10 чанков
-    public final int MAP_SIZE_X = 10;
-
     //время глобального тика
     public final int GLOBALTIME = 3;
-
     //хешмап для игроков
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     //хешмап для прочих динамических обьектов
     private final Map<Integer, GameObject> globalObjectsMap = new ConcurrentHashMap<>();
-
     //карта мира
     private final Chunk[][] worldChunks;
-
     //очередь событий
     private final LinkedBlockingQueue<IEvent> eventsQuene = new LinkedBlockingQueue<>();
+    // Размер карты 10х10 чанков
+    public int MAP_SIZE_X = 45;
+    public int MAP_SIZE_Y = 34;
 
-    public World() {
-        worldChunks = initchunks();
+    public World() throws IOException {
+        GeodataFSLoader geodataFSLoader = new GeodataFSLoader();
+        worldChunks = geodataFSLoader.loadFullMap();
         runGlobalLoop();
     }
 
@@ -94,10 +94,10 @@ public class World implements IWorld {
 
     //TODO из базы подгружать
     public Chunk[][] initchunks() {
-        Chunk[][] random = new Chunk[MAP_SIZE_X][MAP_SIZE_X];
+        Chunk[][] random = new Chunk[MAP_SIZE_X][MAP_SIZE_Y];
         for (int i = 0; i < MAP_SIZE_X; i++) {
-            for (int j = 0; j < MAP_SIZE_X; j++) {
-                random[i][j] = this.randomchunk(TerrainType.EARTH);
+            for (int j = 0; j < MAP_SIZE_Y; j++) {
+                random[i][j] = this.randomchunk(TerrainType.GRASS);
             }
         }
         return random;
@@ -205,5 +205,13 @@ public class World implements IWorld {
 
     public int getMapSizeX() {
         return MAP_SIZE_X;
+    }
+
+    public int getMapSizeY() {
+        return MAP_SIZE_Y;
+    }
+
+    public int getLoopDelay() {
+        return GLOBALTIME;
     }
 }

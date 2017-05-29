@@ -6,6 +6,7 @@ import info.openrpg.ejb.model.actors.GameObject;
 import info.openrpg.ejb.model.actors.Player;
 import info.openrpg.ejb.model.events.IEvent;
 import info.openrpg.ejb.model.events.PlayerEvent;
+import info.openrpg.ejb.utils.GeodataDBLoader;
 import info.openrpg.ejb.utils.GeodataFSLoader;
 
 import javax.annotation.PostConstruct;
@@ -43,10 +44,13 @@ public class World {
     @PostConstruct
     public void init() {
         GeodataFSLoader geodataFSLoader = null;
+        GeodataDBLoader geodataDBLoader = null;
         try {
             geodataFSLoader = new GeodataFSLoader();
         } catch (IOException e) {
-            e.printStackTrace();
+            geodataDBLoader = new GeodataDBLoader();
+            worldChunks = geodataDBLoader.loadFullMap();
+            runGlobalLoop();
         } finally {
             worldChunks = geodataFSLoader.loadFullMap();
             runGlobalLoop();

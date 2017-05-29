@@ -12,6 +12,7 @@
     <modules>
         <module>openrpg-tgbot</module>
         <module>openrpg-gameserver</module>
+        <module>openrpg-ejb</module>
     </modules>
 
     <build>

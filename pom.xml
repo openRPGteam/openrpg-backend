@@ -10,9 +10,10 @@
     <name>OpenRPG Backend</name>
 
     <modules>
-        <module>openrpg-tgbot</module>
-        <module>openrpg-gameserver</module>
+        <!--  <module>openrpg-tgbot</module>
+          <module>openrpg-gameserver</module> -->
         <module>openrpg-ejb</module>
+        <module>openrpg-rest</module>
     </modules>
 
     <build>

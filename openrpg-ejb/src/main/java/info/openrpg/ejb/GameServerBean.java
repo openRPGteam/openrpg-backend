@@ -9,13 +9,15 @@ import info.openrpg.ejb.model.world.World;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Stateless;
+import javax.inject.Named;
 import java.util.List;
 
-@Stateless(name = "GameServerEJB")
+@Named("GameServerEJB")
 @Startup
 @LocalBean
+@Singleton
 public class GameServerBean {
     @EJB
     private World world;

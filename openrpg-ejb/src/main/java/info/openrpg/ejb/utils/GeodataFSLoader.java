@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GeodataFSLoader implements IGeodata {
-    public static final String GEODATAFILE = "src/main/resources/geodata/sample.bin";
+    public static final String GEODATAFILE = "/geodata/sample.bin";
     public final int CHUNK_SIZE = 9;
     private final List<byte[]> geodata;
 
     public GeodataFSLoader() throws IOException {
-        this.geodata = readGeoFromFile(GEODATAFILE);
+        String ejbPath = this.getClass().getResourceAsStream(GEODATAFILE).toString();
+        this.geodata = readGeoFromFile(ejbPath);
+        ;
     }
 
     public GeodataFSLoader(String geoFile) throws IOException {

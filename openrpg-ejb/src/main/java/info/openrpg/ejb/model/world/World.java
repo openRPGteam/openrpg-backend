@@ -8,6 +8,7 @@ import info.openrpg.ejb.model.events.IEvent;
 import info.openrpg.ejb.model.events.PlayerEvent;
 import info.openrpg.ejb.utils.GeodataFSLoader;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Named;
 import java.io.IOException;
@@ -28,18 +29,29 @@ public class World {
     private final Map<Integer, Player> players = new ConcurrentHashMap<>();
     //хешмап для прочих динамических обьектов
     private final Map<Integer, GameObject> globalObjectsMap = new ConcurrentHashMap<>();
-    //карта мира
-    private final Chunk[][] worldChunks;
     //очередь событий
     private final LinkedBlockingQueue<IEvent> eventsQuene = new LinkedBlockingQueue<>();
     // Размер карты 10х10 чанков
     public int MAP_SIZE_X = 45;
     public int MAP_SIZE_Y = 34;
+    //карта мира
+    private Chunk[][] worldChunks;
 
-    public World() throws IOException {
-        GeodataFSLoader geodataFSLoader = new GeodataFSLoader();
-        worldChunks = geodataFSLoader.loadFullMap();
-        runGlobalLoop();
+    public World() {
+    }
+
+    @PostConstruct
+    public void init() {
+        GeodataFSLoader geodataFSLoader = null;
+        try {
+            geodataFSLoader = new GeodataFSLoader();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            worldChunks = geodataFSLoader.loadFullMap();
+            runGlobalLoop();
+        }
+
     }
 
     private void runGlobalLoop() {

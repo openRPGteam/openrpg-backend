@@ -14,6 +14,7 @@
           <module>openrpg-gameserver</module> -->
         <module>openrpg-ejb</module>
         <module>openrpg-rest</module>
+        <module>openrpg-geodata</module>
     </modules>
 
     <build>

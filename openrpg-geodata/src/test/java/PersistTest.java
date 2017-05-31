@@ -1,13 +1,12 @@
+import info.openrpg.db.controllers.ChunkDBJpaController;
+import info.openrpg.db.controllers.WorldMapJpaController;
 import info.openrpg.db.model.ChunkDB;
 import info.openrpg.db.model.WorldMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PersistTest {
     public static final String PUNAME = "TestPU";
@@ -19,21 +18,19 @@ public class PersistTest {
     }
 
     @Test
-    public void addOneToMany() {
-        EntityManager em = factory.createEntityManager();
+    public void addOneToMany() throws Exception {
+        WorldMapJpaController wmjc = new WorldMapJpaController(factory);
+        ChunkDBJpaController cdjc = new ChunkDBJpaController(factory);
         WorldMap mainWorld = new WorldMap("mainWorld");
-        em.getTransaction().begin();
-        em.persist(mainWorld);
+        wmjc.create(mainWorld);
         ChunkDB chunk1 = new ChunkDB(1, 1);
+        chunk1.setWorldMap(mainWorld);
+        cdjc.create(chunk1);
         ChunkDB chunk2 = new ChunkDB(1, 1);
-        List<ChunkDB> chunks = new ArrayList<>();
-        chunks.add(chunk1);
-        chunks.add(chunk2);
-        mainWorld.setChunksList(chunks);
-        em.merge(mainWorld);
-        em.getTransaction().commit();
-        //chunk1.setWorldMap(mainWorld);
-        //chunk2.setWorldMap(mainWorld);
-        em.close();
+        chunk2.setWorldMap(mainWorld);
+        cdjc.create(chunk2);
+        //mainWorld.getChunksList().add(chunk1);
+        //mainWorld.getChunksList().add(chunk2);
+        //wmjc.edit(mainWorld);
     }
 }

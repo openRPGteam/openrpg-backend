@@ -7,15 +7,16 @@ import java.util.List;
 @Entity
 @Table(name = "worlds")
 public class WorldMap implements Serializable {
-    private static final long serialVersionUID = 4979246814108008677L;
 
+    @Column(name = "world_id", updatable = false, nullable = false)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "world_id", updatable = false, nullable = false)
     private Integer world_id;
+
     @Column(name = "world_name")
+    @Basic
     private String worldName;
-    @OneToMany(mappedBy = "worldMap")
+    @OneToMany(cascade = {CascadeType.REMOVE}, fetch = FetchType.LAZY, targetEntity = ChunkDB.class, orphanRemoval = true, mappedBy = "worldMap")
     private List<ChunkDB> chunksList;
 
     public WorldMap() {
@@ -26,7 +27,7 @@ public class WorldMap implements Serializable {
     }
 
     public Integer getWorld_id() {
-        return world_id;
+        return this.world_id;
     }
 
     public void setWorld_id(Integer world_id) {
@@ -34,7 +35,7 @@ public class WorldMap implements Serializable {
     }
 
     public String getWorldName() {
-        return worldName;
+        return this.worldName;
     }
 
     public void setWorldName(String worldName) {
@@ -42,19 +43,11 @@ public class WorldMap implements Serializable {
     }
 
     public List<ChunkDB> getChunksList() {
-        return chunksList;
+        return this.chunksList;
     }
 
     public void setChunksList(List<ChunkDB> chunksList) {
         this.chunksList = chunksList;
     }
 
-    @Override
-    public String toString() {
-        return "WorldMap{" +
-                "world_id=" + world_id +
-                ", worldName='" + worldName + '\'' +
-                ", chunksList=" + chunksList +
-                '}';
-    }
 }

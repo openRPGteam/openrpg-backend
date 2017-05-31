@@ -2,10 +2,12 @@ package info.openrpg.gameserver.model;
 
 import info.openrpg.gameserver.enums.TerrainType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chunk {
+public class Chunk implements Serializable {
+    private static final long serialVersionUID = 3216431071813227947L;
     private final TerrainType[][] chunkmap;
     private List<Integer> playersIdInChunks = new ArrayList<>();
     private List<Integer> objectsIdInChunks = new ArrayList<>();

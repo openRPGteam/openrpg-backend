@@ -6,68 +6,71 @@ import java.io.Serializable;
 @Entity
 @Table(name = "chunks")
 public class ChunkDB implements Serializable {
-    private static final long serialVersionUID = -5790106304101684202L;
 
+    @Column(name = "chunk_id", updatable = false, nullable = false)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chunk_id", updatable = false, nullable = false)
     private Integer chunk_id;
 
+    @Basic
+    private int chunkX;
 
-    @ManyToOne()
+    @Basic
+    private int chunkY;
+
+    @ManyToOne(targetEntity = WorldMap.class)
     @JoinColumn(name = "world_id")
     private WorldMap worldMap;
 
-    private int chunkX;
-    private int chunkY;
-
-    public ChunkDB() {
-    }
+    @Version
+    private long attribute;
 
     public ChunkDB(int chunkX, int chunkY) {
         this.chunkX = chunkX;
         this.chunkY = chunkY;
     }
 
-    public int getChunkX() {
-        return chunkX;
-    }
-
-    public void setChunkX(int chunkX) {
-        this.chunkX = chunkX;
+    public ChunkDB() {
     }
 
     public Integer getChunk_id() {
-        return chunk_id;
+        return this.chunk_id;
     }
 
     public void setChunk_id(Integer chunk_id) {
         this.chunk_id = chunk_id;
     }
 
-    public WorldMap getWorldMap() {
-        return worldMap;
+    public int getChunkX() {
+        return this.chunkX;
     }
 
-    public void setWorldMap(WorldMap worldMap) {
-        this.worldMap = worldMap;
+    public void setChunkX(int chunkX) {
+        this.chunkX = chunkX;
     }
 
     public int getChunkY() {
-        return chunkY;
+        return this.chunkY;
     }
 
     public void setChunkY(int chunkY) {
         this.chunkY = chunkY;
     }
 
-    @Override
-    public String toString() {
-        return "ChunkDB{" +
-                "chunk_id=" + chunk_id +
-                ", worldMap=" + worldMap +
-                ", chunkX=" + chunkX +
-                ", chunkY=" + chunkY +
-                '}';
+    public WorldMap getWorldMap() {
+        return this.worldMap;
     }
+
+    public void setWorldMap(WorldMap worldMap) {
+        this.worldMap = worldMap;
+    }
+
+    public long getAttribute() {
+        return this.attribute;
+    }
+
+    public void setAttribute(long attribute) {
+        this.attribute = attribute;
+    }
+
 }
